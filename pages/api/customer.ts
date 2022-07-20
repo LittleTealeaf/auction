@@ -1,11 +1,8 @@
-import { Customer, PrismaClient } from "@prisma/client";
+import { Customer } from "@prisma/client";
+import { containsQuery, db } from "lib/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 
 type Response = NextApiResponse<Customer[] | Customer | null>;
-
-interface LooseObject {
-    [key: string]: any;
-}
 
 export default async function handler(req: NextApiRequest, res: Response) {
     if (req.method == "GET") {
@@ -13,28 +10,43 @@ export default async function handler(req: NextApiRequest, res: Response) {
     }
 }
 
-async function GET(req: NextApiRequest, res: Response) {
-    const where: LooseObject = {};
+type GetQueryParameters = {
+    id?: number;
+    firstName?: string;
+    lastName?: string;
+    phone?: string;
+    email?: string;
+    address?: string;
+};
 
-    if(Object.hasOwn(req.query,"id")) {
-        where.id = Number(req.query.id);
-    } else {
-        Object.entries(req.query).forEach(([key, contains]) => {
-            if(key != "id") {
-                where[key] = {
-                    contains,
-                };
+async function GET(req: NextApiRequest, res: Response) {
+    const query: GetQueryParameters = req.query;
+
+    //If the user specifies and ID, perform a singular id lookup
+    if(query.id != null) {
+        const result = await db.customer.findFirst({
+            where: {
+                id: query.id
             }
         });
+
+        if(result == null) return res.status(204).end();
+
+        return res.status(200).json(result);
     }
 
-    const client = new PrismaClient();
+    //Perform a full query
+    const result = await db.customer.findMany({
+        where: {
+            firstName: containsQuery(query.firstName),
+            lastName: containsQuery(query.lastName),
+            phone: containsQuery(query.phone),
+            address: containsQuery(query.address),
+            email: containsQuery(query.email)
+        }
+    })
 
-    const queryResult: Customer[] | null = await client.customer.findMany({
-        where
-    });
+    if(result.length == 0) return res.status(204).end();
 
-    await client.$disconnect();
-
-    res.status(200).send(queryResult);
+    return res.status(200).json(result);
 }
