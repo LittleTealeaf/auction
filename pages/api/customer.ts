@@ -11,6 +11,8 @@ export default async function handler(req: NextApiRequest, res: Response) {
 }
 
 async function GET(req: NextApiRequest, res: Response) {
+    //TODO: Change this so theres a "query" term that just searches for matches in all categories
+    
     const query: {
         id?: number;
         firstName?: string;
