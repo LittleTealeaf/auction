@@ -45,6 +45,16 @@ model AuctionItem {
   auctionYear      Int?
 }
 
+model User {
+  id  Int @id @unique @default(autoincrement())
+  password  String?
+}
+
+model AuthKey {
+  key String @id @unique @default(cuid())
+  userId  Int
+}
+
 // model Customer {
 //   id           Int     @id @default(autoincrement())
 //   firstName    String?
