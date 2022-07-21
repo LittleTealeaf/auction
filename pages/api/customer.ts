@@ -6,13 +6,15 @@ type Response = NextApiResponse<Customer[] | Customer | null>;
 
 export default async function handler(req: NextApiRequest, res: Response) {
     if (req.method == "GET") {
-        GET(req, res);
+        return GET(req, res);
     }
+    if(req.method == "POST") return POST(req,res);
+
 }
 
 async function GET(req: NextApiRequest, res: Response) {
     //TODO: Change this so theres a "query" term that just searches for matches in all categories
-    
+
     const query: {
         id?: number;
         firstName?: string;
@@ -52,5 +54,20 @@ async function GET(req: NextApiRequest, res: Response) {
 }
 
 async function POST(req: NextApiRequest, res: Response) {
-    
+    if(req.query.id == null) {
+        // Create and update req query id
+        const new_customer = await db.customer.create({
+            data: {}
+        });
+        req.query.id = String(new_customer.id);
+    }
+
+    const result = await db.customer.update({
+        where: {
+            id: Number(req.query.id)
+        },
+        data: req.query
+    });
+
+    return res.status(200).json(result);
 }
