@@ -14,22 +14,17 @@ async function GET(req: NextApiRequest, res: Response) {
 
     const query: {
         id?: number;
-        query?: string[];
-        count?: number;
+        query?: string;
     } = req.query;
 
-    if(query.count == null) {
-        query.count = 1000;
-    }
-
-    if(query.id != null) {
+    if (query.id != null) {
         const result = await db.customer.findUnique({
             where: {
-                id: query.id
-            }
-        })
+                id: query.id,
+            },
+        });
 
-        if(result == null) {
+        if (result == null) {
             res.status(204).end();
             return;
         }
@@ -37,54 +32,43 @@ async function GET(req: NextApiRequest, res: Response) {
         return res.status(200).json(result);
     }
 
-    if(query.query == null) {
-        const result = await db.customer.findMany({take: query.count});
+    if (query.query == null) {
+        const result = await db.customer.findMany();
 
         return res.status(200).json(result);
     }
 
+    const result = await db.customer.findMany({
+        where: {
+            AND: query.query.split(" ").map((text) => ({
+                OR: [
+                    {
+                        firstName: containsQuery(text),
+                    },
+                    {
+                        lastName: containsQuery(text),
+                    },
+                    {
+                        address: containsQuery(text),
+                    },
+                    {
+                        notes: containsQuery(text),
+                    },
+                    {
+                        email: containsQuery(text),
+                    },
+                    {
+                        phone: containsQuery(text),
+                    },
+                ],
+            })),
+        },
+    });
 
-
-    // const query: {
-    //     id?: number;
-    //     firstName?: string;
-    //     lastName?: string;
-    //     phone?: string;
-    //     email?: string;
-    //     address?: string;
-    // } = req.query;
-
-    // //If the user specifies and ID, perform a singular id lookup
-    // if (query.id != null) {
-    //     const result = await db.customer.findFirst({
-    //         where: {
-    //             id: query.id,
-    //         },
-    //     });
-
-    //     if (result == null) return res.status(204).end();
-
-    //     return res.status(200).json(result);
-    // }
-
-    // //Perform a full query
-    // const result = await db.customer.findMany({
-    //     where: {
-    //         firstName: containsQuery(query.firstName),
-    //         lastName: containsQuery(query.lastName),
-    //         phone: containsQuery(query.phone),
-    //         address: containsQuery(query.address),
-    //         email: containsQuery(query.email),
-    //     },
-    // });
-
-    // if (result.length == 0) return res.status(204).end();
-
-    // return res.status(200).json(result);
+    res.status(200).json(result);
 }
 
 async function POST(req: NextApiRequest, res: Response) {
-
     const data = req.query;
 
     if (req.query.id == null) {
@@ -96,11 +80,14 @@ async function POST(req: NextApiRequest, res: Response) {
         data.id = String(new_customer.id);
     }
 
+    const id = Number(data.id);
+    delete data.id;
+
     const result = await db.customer.update({
         where: {
-            id: Number(req.query.id),
+            id: id,
         },
-        data
+        data,
     });
 
     return res.status(200).json(result);
