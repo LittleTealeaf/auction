@@ -94,27 +94,4 @@ async function DELETE(req: NextApiRequest, res: Response) {
     if (await failedAuthorization(req, res, (user) => user.customerDelete)) return;
 }
 
-// async function POST_old(req: NextApiRequest, res: Response) {
 
-//     const data = req.query;
-
-//     if (req.query.id == null) {
-//         // Create and update req query id
-//         const new_customer = await db.customer.create({
-//             data: {},
-//         });
-
-//         data.id = String(new_customer.id);
-//     }
-
-//     const result = await db.customer.update({
-//         where: {
-//             id: Number(req.query.id),
-//         },
-//         data
-//     });
-
-//     return res.status(200).json(result);
-// }
-
-//
