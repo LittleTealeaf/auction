@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Customer {
-  id           Int     @id @unique @default(autoincrement())
+  id           Int      @id @unique @default(autoincrement())
   firstName    String?
   lastName     String?
   address      String?
@@ -22,17 +22,27 @@ model Customer {
   licenseState String?
   email        String?
   notes        String?
+  Bidder       Bidder[]
+  Winner       Winner[]
 }
 
 model Bidder {
-  id                Int      @id @unique @default(autoincrement())
-  bidderNumber      Int?
+  id                Int       @id @unique @default(autoincrement())
+  customerId        Int?
+  customer          Customer? @relation(fields: [customerId], references: [id])
   auctionYear       Int?
   luPaymentMethod   Int?
   paymentDetails    String?
   paymentAdjustment Decimal?
   totalPaid         Decimal?
   numberOfGuests    Int?
+}
+
+model Winner {
+  id           Int           @id @default(autoincrement())
+  AuctionItems AuctionItem[]
+  Customer     Customer?     @relation(fields: [customerId], references: [id])
+  customerId   Int?
 }
 
 model AuctionItem {
@@ -43,38 +53,39 @@ model AuctionItem {
   winningBidder    Int?
   winningBidAmount Decimal?
   auctionYear      Int?
+  Winner           Winner?  @relation(fields: [winnerId], references: [id])
+  winnerId         Int?
 }
 
 model User {
-  name     String @id @unique
-  password String
-
+  name        String @id @unique
+  password    String
+  roleId      Int?
+  permissions Role?  @relation(fields: [roleId], references: [id])
 }
 
-model Permissions {
-  id Int @id @default(autoincrement())
-  name String?
-  
+model Role {
+  id             Int     @id @default(autoincrement())
+  customerRead   Boolean @default(true)
+  customerWrite  Boolean @default(false)
+  customerCreate Boolean @default(false)
+  customerDelete Boolean @default(false)
+  bidderRead     Boolean @default(true)
+  bidderWrite    Boolean @default(false)
+  bidderCreate   Boolean @default(false)
+  bidderDelete   Boolean @default(false)
+  itemRead       Boolean @default(true)
+  itemWrite      Boolean @default(false)
+  itemCreate     Boolean @default(false)
+  itemDestroy    Boolean @default(false)
+  userRead       Boolean @default(false)
+  userWrite      Boolean @default(false)
+  userCreate     Boolean @default(false)
+  userDelete     Boolean @default(false)
+  User           User[]
 }
 
 model ApiKey {
   key    String @id @unique @default(cuid())
   userId Int?
-
-  // customerRead   Boolean @default(false)
-  // customerWrite  Boolean @default(false)
-  // customerCreate Boolean @default(false)
-  // customerDelete Boolean @default(false)
-  // bidderRead     Boolean @default(false)
-  // bidderWrite    Boolean @default(false)
-  // bidderCreate   Boolean @default(false)
-  // bidderDelete   Boolean @default(false)
-  // itemRead       Boolean @default(false)
-  // itemWrite      Boolean @default(false)
-  // itemCreate     Boolean @default(false)
-  // itemDestroy    Boolean @default(false)
-  // userRead       Boolean @default(false)
-  // userWrite      Boolean @default(false)
-  // userCreate     Boolean @default(false)
-  // userDelete     Boolean @default(false)
 }
