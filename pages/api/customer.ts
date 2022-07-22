@@ -22,12 +22,7 @@ async function GET(req: NextApiRequest, res: Response) {
     const query: {
         id?: number;
         query?: string[];
-        count?: number;
     } = req.query;
-
-    if (query.count == null) {
-        query.count = 1000;
-    }
 
     if (query.id != null) {
         const result = await db.customer.findUnique({
