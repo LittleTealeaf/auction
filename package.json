@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prisma": "prisma db push && prisma generate"
+    "prisma": "prisma db push && prisma generate",
+    "database": "prisma studio"
   },
   "dependencies": {
     "@prisma/client": "^4.0.0",
