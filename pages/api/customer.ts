@@ -45,10 +45,12 @@ async function GET(req: NextApiRequest, res: Response) {
     }
 
     if (query.query == null) {
-        const result = await db.customer.findMany({ take: query.count });
+        const result = await db.customer.findMany();
 
         return res.status(200).json(result);
     }
+
+    //TODO add missing
 }
 
 //Update
@@ -73,7 +75,15 @@ async function PUT(req: NextApiRequest, res: Response) {
 }
 
 //Create
-async function POST(req: NextApiRequest, res: Response) {}
+async function POST(req: NextApiRequest, res: Response) {
+    const data = req.query;
+
+    const result = await db.customer.create({
+        data
+    });
+
+    res.status(200).json(result);
+}
 
 //Delete
 async function DELETE(req: NextApiRequest, res: Response) {}
