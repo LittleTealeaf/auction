@@ -1,12 +1,15 @@
 import { Customer } from "@prisma/client";
+import { failedAuthorization } from "lib/auth";
 import { containsQuery, db } from "lib/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 
-type Response = NextApiResponse<Customer[] | Customer | null>;
+type Response = NextApiResponse<
+    | Customer[]
+    | Customer
+    | null
+>;
 
 export default async function handler(req: NextApiRequest, res: Response) {
-    // if (req.method == "GET") return GET(req, res);
-    // if (req.method == "POST") return POST(req, res);
     if (req.method == "GET") return GET(req, res);
     if (req.method == "PUT") return PUT(req, res);
     if (req.method == "POST") return POST(req, res);
@@ -17,6 +20,8 @@ export default async function handler(req: NextApiRequest, res: Response) {
 
 //Get
 async function GET(req: NextApiRequest, res: Response) {
+    if (await failedAuthorization(req, res, (user) => user.customerRead)) return;
+
     //TODO: Change this so theres a "query" term that just searches for matches in all categories
 
     const query: {
@@ -50,6 +55,8 @@ async function GET(req: NextApiRequest, res: Response) {
 
 //Update
 async function PUT(req: NextApiRequest, res: Response) {
+    if (await failedAuthorization(req, res, (user) => user.customerWrite)) return;
+
     if (req.query.id == null) {
         res.status(400).end();
         return;
@@ -71,17 +78,21 @@ async function PUT(req: NextApiRequest, res: Response) {
 
 //Create
 async function POST(req: NextApiRequest, res: Response) {
+    if (await failedAuthorization(req, res, (user) => user.customerCreate)) return;
+
     const data = req.query;
 
     const result = await db.customer.create({
-        data
+        data,
     });
 
     res.status(200).json(result);
 }
 
 //Delete
-async function DELETE(req: NextApiRequest, res: Response) {}
+async function DELETE(req: NextApiRequest, res: Response) {
+    if (await failedAuthorization(req, res, (user) => user.customerDelete)) return;
+}
 
 // async function POST_old(req: NextApiRequest, res: Response) {
 
