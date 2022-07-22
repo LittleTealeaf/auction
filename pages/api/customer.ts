@@ -54,7 +54,8 @@ async function GET(req: NextApiRequest, res: Response) {
 //Update
 async function PUT(req: NextApiRequest, res: Response) {
     if (req.query.id == null) {
-        return res.status(400).end();
+        res.status(400).end();
+        return;
     }
 
     const id = Number(req.query.id);
