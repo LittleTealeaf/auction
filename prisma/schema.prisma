@@ -46,47 +46,28 @@ model AuctionItem {
 }
 
 model User {
-  id  Int @id @unique @default(autoincrement())
-  password  String?
+  id             Int     @id @unique @default(autoincrement())
+  password       String?
+  //Permissions
+  customerRead   Boolean @default(true)
+  customerWrite  Boolean @default(false)
+  customerCreate Boolean @default(false)
+  customerDelete Boolean @default(false)
+  bidderRead     Boolean @default(true)
+  bidderWrite    Boolean @default(false)
+  bidderCreate   Boolean @default(false)
+  bidderDelete   Boolean @default(false)
+  itemRead       Boolean @default(true)
+  itemWrite      Boolean @default(false)
+  itemCreate     Boolean @default(false)
+  itemDestroy    Boolean @default(false)
+  userRead       Boolean @default(false)
+  userWrite      Boolean @default(false)
+  userCreate     Boolean @default(false)
+  userDelete     Boolean @default(false)
 }
 
 model AuthKey {
-  key String @id @unique @default(cuid())
-  userId  Int
+  key    String @id @unique @default(cuid())
+  userId Int
 }
-
-// model Customer {
-//   id           Int     @id @default(autoincrement())
-//   firstName    String?
-//   lastName     String?
-//   address      String?
-//   city         String?
-//   state        String?
-//   zip          String?
-//   phone        String?
-//   licenseState String?
-//   email        String?
-//   notes        String?
-// }
-
-// model Bidder {
-//   id                Int     @id @default(autoincrement())
-//   customerId        Int?
-//   BidderNumber      Int?
-//   AuctionYear       Int?
-//   NumberOfGuests    Int?
-//   LUPaymentMethod   Int?
-//   PaymentDetails    String?
-//   PaymentAdjustment Float?
-//   TotalPaid         Float?
-// }
-
-// model AuctionItem {
-//   id               Int      @id @default(autoincrement())
-//   number           Int?
-//   description      String?
-//   isSilent         Boolean?
-//   WinningBidder    Int?
-//   WinningBidAmount Float?
-//   AuctionYear      Int?
-// }
