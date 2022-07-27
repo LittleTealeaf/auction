@@ -18,9 +18,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         if (local != null) {
             fetch("./api/login?auth=" + local)
                 .then((response) => response.json())
-                .then((json: { auth: string | null }) => json.auth)
+                .then((json: { auth: string | null | undefined }) => json.auth)
                 .then((auth) => {
-                    setAuth(auth);
+                    setAuth(auth || null);
                 });
         } else {
             setAuth(null);

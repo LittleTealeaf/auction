@@ -2,13 +2,17 @@
   "name": "silent-auction",
   "version": "0.1.0",
   "private": true,
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "prisma": "prisma db push && prisma generate",
-    "database": "prisma studio"
+    "database": "prisma studio",
+    "seed": "prisma db seed"
   },
   "dependencies": {
     "@emotion/react": "^11.9.3",
@@ -21,14 +25,15 @@
     "prisma": "^4.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "semver": "^7.3.7"
+    "semver": "^7.3.7",
+    "ts-node": "^10.9.1"
   },
   "devDependencies": {
-    "@types/node": "18.0.6",
+    "@types/node": "^18.0.6",
     "@types/react": "18.0.15",
     "@types/react-dom": "18.0.6",
     "eslint": "8.20.0",
     "eslint-config-next": "12.2.2",
-    "typescript": "4.7.4"
+    "typescript": "^4.7.4"
   }
 }

@@ -25,11 +25,15 @@ const handler: NextApiHandler = async (request, response) => {
     }
 
     if (username == null) {
-        return response.status(400).json("Missing Parameter: username");
+        return response.status(400).json({
+            error: "Missing Parameter: username"
+        });
     }
 
     if (password == null) {
-        return response.status(200).json("Missing Parameter: password");
+        return response.status(200).json({
+            error: "Missing Parameter: password"
+        });
     }
 
     const user = await db.user.findFirst({
