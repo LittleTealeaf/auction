@@ -1,9 +1,10 @@
+import { Role } from "@prisma/client";
 import { NextApiRequest } from "next";
 import { useAuthContext } from "pages/_app";
 import { useState } from "react";
 import { db } from "./prisma";
 
-export async function verifyAuth(request: NextApiRequest) {
+export async function getUser(request: NextApiRequest) {
     const auth = request.headers.authorization;
 
     if (auth === undefined) {
@@ -35,6 +36,22 @@ export async function verifyAuth(request: NextApiRequest) {
         },
     });
 }
+
+export async function verifyAuth(request: NextApiRequest, test: (role: Role) => boolean) {
+    const user = await getUser(request);
+
+    if(user == null) {
+        return false;
+    }
+
+    if(user?.roleId == undefined) {
+
+    }
+
+
+
+}
+
 
 export async function Fetch(
     endpoint: string,
