@@ -58,10 +58,12 @@ model AuctionItem {
 }
 
 model User {
-  name        String @id @unique
-  password    String
+  id          Int      @id @unique @default(autoincrement())
+  username    String   @unique
+  password    String?
   roleId      Int?
-  permissions Role?  @relation(fields: [roleId], references: [id])
+  permissions Role?    @relation(fields: [roleId], references: [id])
+  keys        ApiKey[]
 }
 
 model Role {
@@ -86,6 +88,10 @@ model Role {
 }
 
 model ApiKey {
-  key    String @id @unique @default(cuid())
-  userId Int?
+  id      Int      @id @unique @default(autoincrement())
+  key     String   @unique @default(cuid())
+  User    User?    @relation(fields: [userId], references: [id])
+  userId  Int?
+  lastUse DateTime @default(now())
+  expired Boolean  @default(false)
 }
