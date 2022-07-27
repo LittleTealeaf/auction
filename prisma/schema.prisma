@@ -90,8 +90,8 @@ model Role {
 model ApiKey {
   id      Int      @id @unique @default(autoincrement())
   key     String   @unique @default(cuid())
-  User    User?    @relation(fields: [userId], references: [id])
-  userId  Int?
+  User    User    @relation(fields: [userId], references: [id])
+  userId  Int
   lastUse DateTime @default(now())
   expired Boolean  @default(false)
 }

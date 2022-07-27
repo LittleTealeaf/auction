@@ -8,6 +8,7 @@ export type AuthResponse = {
 }
 
 const handler: NextApiHandler = async (request, response) => {
+    
     const { username, password, auth } = request.query;
 
     if (auth != null) {
