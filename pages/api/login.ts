@@ -5,10 +5,9 @@ import { stringify } from "querystring";
 export type AuthResponse = {
     auth: string | undefined;
     message: string | undefined;
-}
+};
 
 const handler: NextApiHandler = async (request, response) => {
-    
     const { username, password, auth } = request.query;
 
     if (auth != null) {
@@ -35,25 +34,36 @@ const handler: NextApiHandler = async (request, response) => {
 
     const user = await db.user.findFirst({
         where: {
-            username: String(username)
-        }
+            username: String(username),
+        },
     });
 
-    if(user == null || user.password != String(password)) {
+    if (user == null || (user.password != null && user.password != String(password))) {
         return response.status(200).json({
-            message: "Username and/or Password Incorrect"
+            message: "Username and/or Password Incorrect",
+        });
+    }
+
+    if (user.password == null) {
+        await db.user.update({
+            where: {
+                id: user.id,
+            },
+            data: {
+                password: String(password),
+            },
         });
     }
 
     const apiKey = await db.apiKey.create({
         data: {
-            userId: user.id
-        }
+            userId: user.id,
+        },
     });
 
     response.status(200).json({
-        auth: apiKey.key
-    })
+        auth: apiKey.key,
+    });
 };
 
 export default handler;
