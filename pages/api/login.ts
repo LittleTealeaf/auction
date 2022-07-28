@@ -1,6 +1,5 @@
-import { db } from "lib/prisma";
+import { database } from "lib/api";
 import { NextApiHandler } from "next";
-import { stringify } from "querystring";
 
 export type AuthResponse = {
     auth: string | undefined;
@@ -11,13 +10,13 @@ const handler: NextApiHandler = async (request, response) => {
     const { username, password, auth } = request.query;
 
     if (auth != null) {
-        const apiKey = await db.apiKey.findFirst({
+        const token = await database.token.findFirst({
             where: {
-                key: String(auth),
+                token: String(auth),
             },
         });
 
-        if (apiKey != null && !apiKey.expired) {
+        if (token != null && !token.expired) {
             return response.status(200).json({
                 auth,
             });
@@ -26,17 +25,17 @@ const handler: NextApiHandler = async (request, response) => {
 
     if (username == null) {
         return response.status(400).json({
-            error: "Missing Parameter: username"
+            error: "Missing Parameter: username",
         });
     }
 
     if (password == null) {
         return response.status(200).json({
-            error: "Missing Parameter: password"
+            error: "Missing Parameter: password",
         });
     }
 
-    const user = await db.user.findFirst({
+    const user = await database.user.findFirst({
         where: {
             username: String(username),
         },
@@ -49,7 +48,7 @@ const handler: NextApiHandler = async (request, response) => {
     }
 
     if (user.password == null) {
-        await db.user.update({
+        await database.user.update({
             where: {
                 id: user.id,
             },
@@ -59,14 +58,15 @@ const handler: NextApiHandler = async (request, response) => {
         });
     }
 
-    const apiKey = await db.apiKey.create({
+    const token = await database.token.create({
         data: {
             userId: user.id,
+            permissionsId: user.permissionsId
         },
     });
 
     response.status(200).json({
-        auth: apiKey.key,
+        auth: token.token,
     });
 };
 

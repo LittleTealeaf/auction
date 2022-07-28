@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Customer {
-  id           Int      @id @unique @default(autoincrement())
+  id           Int     @id @unique @default(autoincrement())
   firstName    String?
   lastName     String?
   address      String?
@@ -22,14 +22,11 @@ model Customer {
   licenseState String?
   email        String?
   notes        String?
-  Bidder       Bidder[]
-  Winner       Winner[]
 }
 
 model Bidder {
-  id                Int       @id @unique @default(autoincrement())
+  id                Int      @id @unique @default(autoincrement())
   customerId        Int?
-  customer          Customer? @relation(fields: [customerId], references: [id])
   auctionYear       Int?
   luPaymentMethod   Int?
   paymentDetails    String?
@@ -39,10 +36,8 @@ model Bidder {
 }
 
 model Winner {
-  id           Int           @id @default(autoincrement())
-  AuctionItems AuctionItem[]
-  Customer     Customer?     @relation(fields: [customerId], references: [id])
-  customerId   Int?
+  id         Int  @id @default(autoincrement())
+  customerId Int?
 }
 
 model AuctionItem {
@@ -53,39 +48,27 @@ model AuctionItem {
   winningBidder    Int?
   winningBidAmount Decimal?
   auctionYear      Int?
-  Winner           Winner?  @relation(fields: [winnerId], references: [id])
   winnerId         Int?
 }
 
 model User {
-  id       Int      @id @unique @default(autoincrement())
-  username String   @unique
-  password String?
-  roleId   Int
-  Role     Role     @relation(fields: [roleId], references: [id])
-  keys     ApiKey[]
+  id            Int     @id @unique @default(autoincrement())
+  username      String  @unique
+  password      String?
+  permissionsId Int
 }
 
-model Role {
-  id               Int     @id @default(autoincrement())
-  name             String?
-  customerRead     Boolean @default(true)
-  customerWrite    Boolean @default(false)
-  userAdmin        Boolean @default(false)
-  auctionItemRead  Boolean @default(true)
-  auctionItemWrite Boolean @default(false)
-  winnerRead       Boolean @default(true)
-  winnerWrite      Boolean @default(false)
-  bidderRead       Boolean @default(true)
-  bidderWrite      Boolean @default(false)
-  User             User[]
+model Permissions {
+  id         Int     @id @unique @default(autoincrement())
+  name       String?
+  manageUser Boolean @default(true)
 }
 
-model ApiKey {
-  id      Int      @id @unique @default(autoincrement())
-  key     String   @unique @default(cuid())
-  User    User     @relation(fields: [userId], references: [id])
-  userId  Int
-  lastUse DateTime @default(now())
-  expired Boolean  @default(false)
+model Token {
+  id            Int      @id @unique @default(autoincrement())
+  token         String   @unique @default(cuid())
+  userId        Int
+  permissionsId Int
+  lastUse       DateTime @default(now())
+  expired       Boolean  @default(false)
 }

@@ -1,8 +1,16 @@
-import { Role } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { NextApiRequest } from "next";
-import { useAuthContext } from "pages/_app";
-import { useState } from "react";
-import { db } from "./prisma";
+
+
+export const database = new PrismaClient();
+
+export async function getToken(request: NextApiRequest) {
+    return database.token.findFirst({
+        where: {
+            token: String(request.headers.authorization)
+        }
+    })
+}
 
 export async function getUser(request: NextApiRequest) {
     const auth = request.headers.authorization;
@@ -11,9 +19,9 @@ export async function getUser(request: NextApiRequest) {
         return null;
     }
 
-    const key = await db.apiKey.findFirst({
+    const key = await database.token.findFirst({
         where: {
-            key: auth,
+            token: auth,
         },
     });
 
@@ -21,7 +29,7 @@ export async function getUser(request: NextApiRequest) {
         return null;
     }
 
-    db.apiKey.update({
+    database.token.update({
         where: {
             id: key.id,
         },
@@ -30,79 +38,9 @@ export async function getUser(request: NextApiRequest) {
         },
     });
 
-    return await db.user.findFirst({
+    return await database.user.findFirst({
         where: {
             id: key.userId,
         },
     });
-}
-
-export async function verifyAuth(request: NextApiRequest, test: (role: Role) => boolean) {
-    const user = await getUser(request);
-
-    if(user == null) {
-        return false;
-    }
-
-    if(user?.roleId == undefined) {
-
-    }
-
-
-
-}
-
-
-export async function Fetch(
-    endpoint: string,
-    {
-        method = "GET",
-        cache = "default",
-        headers = {},
-        body = {},
-    }: {
-        method: "GET" | "POST" | "DELETE" | "PUT";
-        cache: "no-cache" | "reload" | "default" | "only-if-cached";
-        headers: {
-            [key: string]: string;
-        };
-        body: {
-            [key: string]: string;
-        };
-    }
-) {
-    return fetch(`api/${endpoint}`, {
-        method,
-        body: JSON.stringify(body),
-        cache,
-        headers: {
-            ...headers,
-            authentication: useAuthContext(),
-        },
-    });
-}
-
-export function useFetch<T>(
-    endpoint: string,
-    {
-        method = "GET",
-        cache = "default",
-        headers = {},
-        body = {},
-    }: {
-        method: "GET" | "POST" | "DELETE" | "PUT";
-        cache: "no-cache" | "reload" | "default" | "only-if-cached";
-        headers: {
-            [key: string]: string;
-        };
-        body: {
-            [key: string]: string;
-        };
-    }
-) {
-    const [result, setResult] = useState<T | undefined>(undefined);
-    Fetch(endpoint, { method, cache, headers, body })
-        .then((result) => result.json())
-        .then(setResult);
-    return result;
 }

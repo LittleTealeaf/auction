@@ -48,4 +48,8 @@ export function useAuthContext() {
     return useContext(AuthContext);
 }
 
+export function useAuthStorage() {
+    return sessionStorage.getItem("auth");
+}
+
 export default MyApp;
