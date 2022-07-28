@@ -11,38 +11,41 @@ import { Skeleton } from "@mui/material";
 const AuthContext = createContext("");
 
 function MyApp({ Component, pageProps }: AppProps) {
-    const [auth, setAuth] = useState<string | null | undefined>(undefined);
+    // const [auth, setAuth] = useState<string | null | undefined>(undefined);
 
-    useEffect(() => {
-        const local = sessionStorage.getItem("auth");
-        if (local != null) {
-            fetch("./api/login?auth=" + local)
-                .then((response) => response.json())
-                .then((json: { auth: string | null | undefined }) => json.auth)
-                .then((auth) => {
-                    setAuth(auth || null);
-                });
-        } else {
-            setAuth(null);
-        }
-    }, []);
+    // useEffect(() => {
+    //     const local = sessionStorage.getItem("auth");
+    //     if (local != null) {
+    //         fetch("./api/login?auth=" + local)
+    //             .then((response) => response.json())
+    //             .then((json: { auth: string | null | undefined }) => json.auth)
+    //             .then((auth) => {
+    //                 setAuth(auth || null);
+    //             });
+    //     } else {
+    //         setAuth(null);
+    //     }
+    // }, []);
 
-    if (auth === undefined) {
-        return <Skeleton variant="rectangular" width={"100vw"} height="100vh" />;
-    }
+    // if (auth === undefined) {
+    //     return <Skeleton variant="rectangular" width={"100vw"} height="100vh" />;
+    // }
 
-    if (auth == null) {
-        return <LoginPage authAbsorber={setAuth} />;
-    }
+    // if (auth == null) {
+    //     return <LoginPage authAbsorber={setAuth} />;
+    // }
 
-    sessionStorage.setItem("auth", auth);
+    // sessionStorage.setItem("auth", auth);
 
-    return (
-        <AuthContext.Provider value={auth}>
-            <Component {...pageProps} />
-        </AuthContext.Provider>
-    );
+    // return (
+    //     <AuthContext.Provider value={auth}>
+    //         <Component {...pageProps} />
+    //     </AuthContext.Provider>
+    // );
+    return <></>
 }
+
+
 
 export function useAuthContext() {
     return useContext(AuthContext);

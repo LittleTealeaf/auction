@@ -17,6 +17,16 @@ const handler: NextApiHandler = async (request, response) => {
         });
 
         if (token != null && !token.expired) {
+
+            await database.token.update({
+                where: {
+                    id: token.id
+                },
+                data: {
+                    lastUse: new Date()
+                }
+            });
+
             return response.status(200).json({
                 auth,
             });
@@ -28,6 +38,8 @@ const handler: NextApiHandler = async (request, response) => {
             error: "Missing Parameter: username",
         });
     }
+
+
 
     if (password == null) {
         return response.status(200).json({
