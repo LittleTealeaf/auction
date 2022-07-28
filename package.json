@@ -12,7 +12,8 @@
     "lint": "next lint",
     "prisma": "prisma db push && prisma generate",
     "database": "prisma studio",
-    "seed": "prisma db seed"
+    "seed": "prisma db seed",
+    "reset": "rm ./prisma/database.db"
   },
   "dependencies": {
     "@emotion/react": "^11.9.3",
