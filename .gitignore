@@ -36,3 +36,6 @@ yarn-error.log*
 
 prisma/database.db
 prisma/database.db-journal
+
+
+.env.json

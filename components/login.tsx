@@ -1,108 +1,73 @@
-import { Alert, Button, FormControl, Grid, Paper, TextField } from "@mui/material";
-import { NextPage } from "next";
-import { ChangeEventHandler, CSSProperties, FormEventHandler, useState } from "react";
+import { Button, CircularProgress, FormControl, FormHelperText, Grid, Paper, TextField } from "@mui/material";
+import { FC, FormEventHandler, useState } from "react";
+import { UserData } from "types/api";
+import classes from "styles/login.module.scss";
 
-export type params = {
-    authAbsorber: (key: string) => void;
-};
+const LoginPage: FC<{
+    onLogin: (result: { sid: string; user: UserData }) => void;
+}> = ({ onLogin }) => {
+    const [error, setError] = useState<String | null>(null);
 
-export default function LoginPage({ authAbsorber }: params) {
-    const [formValues, setFormValues] = useState({
-        username: "",
-        password: "",
-    });
-
-    const [error, setError] = useState<string | null>(null);
-
-    const handleInputChange: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (e) => {
-        const { name, value } = e.target;
-        setFormValues({
-            ...formValues,
-            [name]: value,
-        });
-    };
+    const [processing, setProcessing] = useState(false);
 
     const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
+        setProcessing(true);
+        setError(null);
         event.preventDefault();
-        const response = await fetch("./api/login?" + new URLSearchParams(formValues));
-        if (response.status == 200) {
-            const json: {
-                auth?: string | null;
-                message?: string;
-            } = await response.json();
 
-            if (json.auth !== null && json.auth !== undefined) {
-                authAbsorber(json.auth);
-            } else {
-                setError(json.message || null);
-            }
-        }
+        const username = (event.currentTarget.elements.namedItem("username") as { value: string }).value;
+        const password = (event.currentTarget.elements.namedItem("password") as { value: string }).value;
+
+        fetch(`api/auth/login?username=${username}&password=${password}`, {
+            method: "POST",
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                setProcessing(false);
+                const { message, result } = data;
+                if (result) {
+                    onLogin(result);
+                } else {
+                    setError(message);
+                }
+            });
     };
 
-    const ErrorField = () =>
-        error == null ? (
-            <></>
-        ) : (
-            <Alert
-                severity="error"
-                style={{
-                    margin: "20px",
-                }}
-                onClose={() => setError(null)}
-            >
-                {error}
-            </Alert>
-        );
-
     return (
-        <>
-            <Grid>
-                <div
-                    style={{
-                        margin: "auto",
-                        marginTop: "20px",
-                        width: "fit-content",
-                    }}
-                >
-                    <Paper
-                        elevation={10}
-                        style={{
-                            padding: "40px",
-                            width: "fit-content",
-                            margin: "auto",
-                        }}
-                    >
-                        <Grid alignContent={"center"}></Grid>
-                        <form onSubmit={handleSubmit}>
-                            <FormControl>
-                                <TextField name="username" id="username" label="username" variant="standard" placeholder="Enter username" fullWidth required onChange={handleInputChange} />
-                                <TextField
-                                    name="password"
-                                    id="password"
-                                    label="password"
-                                    variant="standard"
-                                    placeholder="Enter username"
-                                    type="password"
-                                    fullWidth
-                                    required
-                                    onChange={handleInputChange}
-                                />
-
-                                <Button
-                                    type="submit"
-                                    variant="contained"
-                                    style={{
-                                        marginTop: "20px",
-                                    }}
-                                >
-                                    Login
-                                </Button>
-                            </FormControl>
-                        </form>
-                    </Paper>
-                    <ErrorField />
-                </div>
-            </Grid>
-        </>
+        <Grid className={classes.root}>
+            <Paper elevation={10} className={classes.container}>
+                <h1>Login</h1>
+                <form onSubmit={handleSubmit}>
+                    <FormControl>
+                        <TextField name="username" label="username" id="username" variant="standard" placeholder="username" required error={error != null} />
+                        <TextField name="password" label="password" id="password" type="password" variant="standard" placeholder="password" required error={error != null} />
+                        {error != null ? (
+                            <FormHelperText
+                                id="error"
+                                style={{
+                                    color: "red",
+                                }}
+                            >
+                                {error}
+                            </FormHelperText>
+                        ) : (
+                            <></>
+                        )}
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            style={{
+                                marginTop: "20px",
+                            }}
+                        >
+                            {"Login"}
+                        </Button>
+                        {processing ? <CircularProgress /> : <></>}
+                    </FormControl>
+                </form>
+            </Paper>
+        </Grid>
     );
-}
+};
+
+export default LoginPage;

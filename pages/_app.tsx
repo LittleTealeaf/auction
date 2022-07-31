@@ -4,55 +4,42 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import type { AppProps } from "next/app";
-import { createContext, useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { ApiMessage, UserData } from "types/api";
+import LoadingPage from "components/loading";
 import LoginPage from "components/login";
-import { Skeleton } from "@mui/material";
-
-const AuthContext = createContext("");
+import { NextPage } from "next";
 
 function MyApp({ Component, pageProps }: AppProps) {
-    // const [auth, setAuth] = useState<string | null | undefined>(undefined);
+    const [user, setUser] = useState<UserData | null | undefined>(undefined);
 
-    // useEffect(() => {
-    //     const local = sessionStorage.getItem("auth");
-    //     if (local != null) {
-    //         fetch("./api/login?auth=" + local)
-    //             .then((response) => response.json())
-    //             .then((json: { auth: string | null | undefined }) => json.auth)
-    //             .then((auth) => {
-    //                 setAuth(auth || null);
-    //             });
-    //     } else {
-    //         setAuth(null);
-    //     }
-    // }, []);
+    useEffect(() => {
+        fetch("api/auth/login", {
+            method: "GET",
+            headers: {
+                authorization: localStorage.getItem('auth') || ""
+            }
+        })
+            .then((response) => response.json())
+            .then((data) => setUser(data.user || null));
+    }, []);
 
-    // if (auth === undefined) {
-    //     return <Skeleton variant="rectangular" width={"100vw"} height="100vh" />;
-    // }
+    if (user === undefined) {
+        return <LoadingPage />;
+    }
 
-    // if (auth == null) {
-    //     return <LoginPage authAbsorber={setAuth} />;
-    // }
+    if (user == null) {
+        return <LoginPage onLogin={({sid,user}) => {
+            localStorage.setItem('auth',sid);
+            setUser(user);
+        }} />;
+    }
 
-    // sessionStorage.setItem("auth", auth);
-
-    // return (
-    //     <AuthContext.Provider value={auth}>
-    //         <Component {...pageProps} />
-    //     </AuthContext.Provider>
-    // );
-    return <></>
-}
-
-
-
-export function useAuthContext() {
-    return useContext(AuthContext);
-}
-
-export function useAuthStorage() {
-    return sessionStorage.getItem("auth");
+    return (
+        <>
+            <Component {...pageProps} user = {user}/>
+        </>
+    );
 }
 
 export default MyApp;

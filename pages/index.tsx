@@ -1,11 +1,11 @@
 import type { NextPage } from "next";
-import { useAuthContext } from "./_app";
+import { UserData } from "types/api";
+import { AppPage } from "types/app";
 
-const Home: NextPage = () => {
+const Home: AppPage = ({user}) => {
 
-    const auth = useAuthContext();
 
-    return <>{auth}</>
+    return <>awef</>;
 };
 
 export default Home;

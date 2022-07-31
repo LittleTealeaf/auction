@@ -13,7 +13,7 @@
     "prisma": "prisma db push && prisma generate",
     "database": "prisma studio",
     "seed": "prisma db seed",
-    "reset": "rm ./prisma/database.db"
+    "dbreset": "rm ./prisma/database.db"
   },
   "dependencies": {
     "@emotion/react": "^11.9.3",
@@ -21,11 +21,17 @@
     "@fontsource/roboto": "^4.5.7",
     "@mui/material": "^5.9.2",
     "@prisma/client": "^4.1.0",
+    "argon2": "^0.28.7",
+    "dotenv": "^16.0.1",
+    "fs": "^0.0.1-security",
     "next": "12.2.3",
+    "next-session": "^4.0.5",
     "node": "^18.5.0",
     "prisma": "^4.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "sass": "^1.54.0",
+    "scss": "^0.2.4",
     "semver": "^7.3.7",
     "ts-node": "^10.9.1"
   },
