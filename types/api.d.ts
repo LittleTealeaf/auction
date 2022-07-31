@@ -5,6 +5,7 @@ export type ApiMessage = {
 }
 
 export type UserData = {
+    id: number;
     username: string;
     manageUsers: boolean;
 };

@@ -5,6 +5,11 @@ import { UserData } from "types/api";
 export const database = new PrismaClient();
 
 export async function getUser(request: NextApiRequest) {
+
+    if(!request.headers.authorization) {
+        return null;
+    }
+
     //Get session
     const session = await database.session.findFirst({
         where: {
@@ -26,8 +31,8 @@ export async function getUser(request: NextApiRequest) {
 }
 
 export function toUserData(user: User): UserData {
-    const {username, manageUsers} = user;
-    return {username, manageUsers};
+    const {id, username, manageUsers} = user;
+    return {id, username, manageUsers};
 }
 
 export async function createSession(user: User) {

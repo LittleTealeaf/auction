@@ -5,10 +5,9 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import type { AppProps } from "next/app";
 import { useEffect, useState } from "react";
-import { ApiMessage, UserData } from "types/api";
-import LoadingPage from "components/loading";
-import LoginPage from "components/login";
-import { NextPage } from "next";
+import { UserData } from "types/api";
+import LoadingPage from "components/screen/loading";
+import LoginPage from "components/screen/login";
 
 function MyApp({ Component, pageProps }: AppProps) {
     const [user, setUser] = useState<UserData | null | undefined>(undefined);
