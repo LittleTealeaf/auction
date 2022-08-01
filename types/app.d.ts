@@ -4,5 +4,5 @@ import { UserData } from "./api";
 
 
 export type AppPage<T = {}> = NextPage<{
-    user: UserData
+    userData: UserData
 } & T>;

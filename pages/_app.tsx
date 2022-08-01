@@ -11,29 +11,29 @@ import LoginPage from "components/screen/login";
 import { fetchAPI } from "lib/fetchwrapper";
 
 function MyApp({ Component, pageProps }: AppProps) {
-    const [user, setUser] = useState<UserData | null | undefined>(undefined);
+    const [userData, setUserData] = useState<UserData | null | undefined>(undefined);
 
     useEffect(() => {
         fetchAPI('GET','api/auth/login')
             .then((response) => response.json())
             .then(data => data.user || null)
-            .then(setUser);
+            .then(setUserData);
     }, []);
 
-    if (user === undefined) {
+    if (userData === undefined) {
         return <LoadingPage />;
     }
 
-    if (user == null) {
+    if (userData == null) {
         return <LoginPage onLogin={({sid,user}) => {
             localStorage.setItem('auth',sid);
-            setUser(user);
+            setUserData(user);
         }} />;
     }
 
     return (
         <>
-            <Component {...pageProps} user = {user}/>
+            <Component {...pageProps} userData = {userData}/>
         </>
     );
 }

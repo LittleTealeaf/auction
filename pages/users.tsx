@@ -28,7 +28,7 @@ import { fetchAPI, getStatusJson } from "lib/fetchwrapper";
 import { FC, FormEventHandler, useEffect, useState } from "react";
 import { AppPage } from "types/app";
 import classes from "styles/users.module.scss";
-import { getFormElement } from "lib/formwrapper";
+import { getElementFromForm } from "lib/formwrapper";
 import { GetStaticProps } from "next";
 import Head from "next/head";
 import { database } from "lib/api/prisma";
@@ -159,9 +159,9 @@ const EditUser: FC<{ user: User | null; close: (refresh: boolean) => void }> = (
 
         const data = {
             id: user?.id,
-            username: getFormElement<Element & { value: string }>(event, "username").value,
-            password: getFormElement<Element & { value: string }>(event, "password").value,
-            manageUsers: getFormElement<Element & { checked: boolean }>(event, "manageUsers").checked,
+            username: getElementFromForm<Element & { value: string }>(event, "username").value,
+            password: getElementFromForm<Element & { value: string }>(event, "password").value,
+            manageUsers: getElementFromForm<Element & { checked: boolean }>(event, "manageUsers").checked,
         };
         //TODO: PREVENT REMOVING YOUR OWN ACCESS
 
@@ -197,8 +197,8 @@ const EditUser: FC<{ user: User | null; close: (refresh: boolean) => void }> = (
     );
 };
 
-const Page: AppPage<{ userCount: number }> = ({ user, userCount }) => {
-    if (!user.manageUsers) return <ForbiddenPage />;
+const Page: AppPage<{ userCount: number }> = ({ userData, userCount }) => {
+    if (!userData.manageUsers) return <ForbiddenPage />;
     return <Content userCount={userCount} />;
 };
 

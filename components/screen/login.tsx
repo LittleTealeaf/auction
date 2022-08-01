@@ -1,38 +1,37 @@
-import { Button, CircularProgress, FormControl, FormHelperText, Grid, Paper, TextField } from "@mui/material";
+import Head from "next/head";
 import { FC, FormEventHandler, useState } from "react";
 import { UserData } from "types/api";
-import Head from "next/head";
-import classes from "styles/login.module.scss";
+import scss from "styles/login.module.scss";
+import { Button, CircularProgress, FormHelperText, Paper, TextField, Typography } from "@mui/material";
+import { getFormElements } from "lib/formwrapper";
 import { fetchAPI } from "lib/fetchwrapper";
 
-const LoginPage: FC<{
+export type LoginScreenParams = {
     onLogin: (result: { sid: string; user: UserData }) => void;
-}> = ({ onLogin }) => {
-    const [error, setError] = useState<String | null>(null);
+};
 
-    const [processing, setProcessing] = useState(false);
+const LoginScreen: FC<LoginScreenParams> = ({ onLogin }) => {
+    const [loading, setLoading] = useState(false);
+
+    const [error, setError] = useState<string | null>(null);
 
     const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
-        setProcessing(true);
-        setError(null);
         event.preventDefault();
+        setLoading(true);
+        setError(null);
 
-        const username = (event.currentTarget.elements.namedItem("username") as { value: string }).value;
-        const password = (event.currentTarget.elements.namedItem("password") as { value: string }).value;
+        const { username, password } = getFormElements(event, ["username", "password"]);
 
         fetchAPI("POST", "api/auth/login", {
-            username,
-            password,
+            username: (username as { value: string }).value,
+            password: (password as { value: string }).value,
         })
             .then((response) => response.json())
             .then((data) => {
-                setProcessing(false);
+                setLoading(false);
                 const { message, result } = data;
-                if (result) {
-                    onLogin(result);
-                } else {
-                    setError(message);
-                }
+                if (result) return onLogin(result);
+                setError(message);
             });
     };
 
@@ -41,52 +40,26 @@ const LoginPage: FC<{
             <Head>
                 <title>Login</title>
             </Head>
-            <Grid className={classes.root}>
-                <Paper elevation={10} className={classes.container}>
-                    <h1>Login</h1>
+            <div className={scss.root}>
+                <Paper className={scss.paper} elevation={24}>
                     <form onSubmit={handleSubmit}>
-                        <FormControl>
-                            <TextField name="username" label="username" id="username" variant="standard" placeholder="username" required error={error != null} />
-                            <TextField name="password" label="password" id="password" type="password" variant="standard" placeholder="password" required error={error != null} />
-                            {error != null ? (
-                                <FormHelperText
-                                    id="error"
-                                    style={{
-                                        color: "red",
-                                    }}
-                                >
-                                    {error}
-                                </FormHelperText>
-                            ) : (
-                                <></>
-                            )}
-                            <Button
-                                type="submit"
-                                variant="contained"
-                                style={{
-                                    marginTop: "20px",
-                                }}
-                            >
-                                {"Login"}
+                        <Typography variant="h3">Sign in</Typography>
+                        <div className={scss.credentials}>
+                            <TextField id="username" label="username" variant="standard" required error={error != null} />
+                            <TextField id="password" label="password" variant="standard" type="password" required error={error != null} />
+                        </div>
+                        {error && <FormHelperText className={scss.error}>{error}</FormHelperText>}
+                        <div className={scss.submit}>
+                            <Button variant="contained" disabled={loading} type="submit">
+                                Sign in
                             </Button>
-                            {processing ? (
-                                <div
-                                    style={{
-                                        margin: "auto",
-                                        marginTop: "20px",
-                                    }}
-                                >
-                                    <CircularProgress size={50} />
-                                </div>
-                            ) : (
-                                <></>
-                            )}
-                        </FormControl>
+                            {loading && <CircularProgress size={24} className={scss.progress} />}
+                        </div>
                     </form>
                 </Paper>
-            </Grid>
+            </div>
         </>
     );
 };
 
-export default LoginPage;
+export default LoginScreen;
