@@ -1,6 +1,6 @@
 import { hash } from "argon2";
 import apiHandler from "lib/api/handler";
-import { createSession, database, getUser, toUserData, setUserPassword } from "lib/api/prisma";
+import { createSession, database, getUser, toUserData } from "lib/api/prisma";
 
 export default apiHandler({
     GET: async (request, response) =>
@@ -24,7 +24,12 @@ export default apiHandler({
         if (user == null) return response.status(200).json({ message: "User not found" });
 
         if (user.password == null) {
-            await setUserPassword(user, request.cookies.auth, String(username));
+            user.password = await database.user
+                .update({
+                    where: { id: user.id },
+                    data: { password: String(password) },
+                })
+                .then((user) => user.password);
         } else {
             if (user.password != password) return response.status(200).json({ message: "Password does not match" });
         }
@@ -36,8 +41,27 @@ export default apiHandler({
         response.status(200).json({
             result: {
                 sid: session.sid,
-            user: toUserData(user)
-            }
+                user: toUserData(user),
+            },
         });
+    },
+    DELETE: async (request, response) => {
+        await database.session
+            .update({
+                where: {
+                    sid: request.headers.authorization,
+                },
+                data: {
+                    expired: true,
+                },
+            })
+            .then((session) => {
+                response.status(202).json({
+                    oldSid: session.sid,
+                });
+            })
+            .catch((error) => {
+                response.status(500).json({ message: "Internal Database Error", error });
+            });
     },
 });

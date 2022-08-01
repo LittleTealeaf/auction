@@ -1,14 +1,14 @@
 import { User } from "@prisma/client";
 import ForbiddenPage from "components/screen/forbidden";
-import { fetchAPI, getStatusJson } from "lib/fetchwrapper";
+import { fetchAPI, getStatusJson } from "lib/app/fetch";
 import { FC, useEffect, useState } from "react";
 import { AppPage } from "types/app";
 
 
 
-const Page: AppPage = ({userData}) => {
+const Page: AppPage = ({user}) => {
 
-    if(!userData.manageUsers) return <ForbiddenPage />
+    if(!user.manageUsers) return <ForbiddenPage />
     return <PageContent />
 }
 
@@ -21,7 +21,7 @@ const PageContent: FC = ({}) => {
     }
 
     useEffect(loadUsers,[]);
- 
+
     return <>awef</>
 }
 

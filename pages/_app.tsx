@@ -8,34 +8,42 @@ import { useEffect, useState } from "react";
 import { UserData } from "types/api";
 import LoadingPage from "components/screen/loading";
 import LoginPage from "components/screen/login";
-import { fetchAPI } from "lib/fetchwrapper";
+import { fetchAPI } from "lib/app/fetch";
 
-function MyApp({ Component, pageProps }: AppProps) {
-    const [userData, setUserData] = useState<UserData | null | undefined>(undefined);
+function AppRoot({ Component, pageProps }: AppProps) {
+    const [user, setUser] = useState<UserData | null | undefined>(undefined);
 
     useEffect(() => {
-        fetchAPI('GET','api/auth/login')
+        fetchAPI("GET", "api/auth/login")
             .then((response) => response.json())
-            .then(data => data.user || null)
-            .then(setUserData);
+            .then((data) => data.user || null)
+            .then(setUser);
     }, []);
 
-    if (userData === undefined) {
+    if (user === undefined) {
         return <LoadingPage />;
     }
 
-    if (userData == null) {
-        return <LoginPage onLogin={({sid,user}) => {
-            localStorage.setItem('auth',sid);
-            setUserData(user);
-        }} />;
+    if (user == null) {
+        return (
+            <LoginPage
+                onLogin={({ sid, user }) => {
+                    localStorage.setItem("auth", sid);
+                    setUser(user);
+                }}
+            />
+        );
     }
 
+    return <AppPage {...{ Component, ...pageProps, user }} />;
+}
+
+function AppPage({ Component, pageProps, user }: AppProps & { user: UserData }) {
     return (
         <>
-            <Component {...pageProps} userData = {userData}/>
+            <Component {...{ ...pageProps, user }} />
         </>
     );
 }
 
-export default MyApp;
+export default AppRoot;

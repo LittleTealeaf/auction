@@ -3,8 +3,8 @@ import { FC, FormEventHandler, useState } from "react";
 import { UserData } from "types/api";
 import scss from "styles/login.module.scss";
 import { Button, CircularProgress, FormHelperText, Paper, TextField, Typography } from "@mui/material";
-import { getFormElements } from "lib/formwrapper";
-import { fetchAPI } from "lib/fetchwrapper";
+import { getFormElements } from "lib/app/form";
+import { fetchAPI } from "lib/app/fetch";
 
 export type LoginScreenParams = {
     onLogin: (result: { sid: string; user: UserData }) => void;

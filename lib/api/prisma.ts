@@ -31,49 +31,14 @@ export async function getUser(request: NextApiRequest) {
 }
 
 export function toUserData(user: User): UserData {
-    const {id, username, manageUsers} = user;
-    return {id, username, manageUsers};
+    const {password, ...userData} = user;
+    return userData;
 }
 
 export async function createSession(user: User) {
     return await database.session.create({
         data: {
             userId: user.id,
-        },
-    });
-}
-
-export async function setUserPassword(user: User, currentSession: string | null | undefined, password: string) {
-    // remove all session except for the current session
-    await database.session.updateMany({
-        where: {
-            userId: user.id,
-            NOT: {
-                sid: currentSession || "",
-            },
-        },
-        data: {
-            expired: true,
-        },
-    });
-    // update the users password
-    await database.user.update({
-        where: {
-            id: user.id,
-        },
-        data: {
-            password: password,
-        },
-    });
-}
-
-export async function resetPassword(user: User) {
-    return database.user.update({
-        where: {
-            id: user.id,
-        },
-        data: {
-            password: null,
         },
     });
 }

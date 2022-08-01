@@ -59,7 +59,7 @@ model User {
 }
 
 model Session {
-  sid  String  @id @unique @default(cuid())
+  sid     String  @id @unique @default(cuid())
   userId  Int
   expired Boolean @default(false)
 }

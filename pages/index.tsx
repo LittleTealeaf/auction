@@ -1,6 +1,6 @@
 import { AppPage } from "types/app";
 
-const Home: AppPage = ({userData}) => {
+const Home: AppPage = ({user}) => {
 
 
     return <>awef</>;

@@ -1,5 +1,5 @@
 import apiHandler, { requireLogin } from "lib/api/handler";
-import { database } from "lib/api/prisma";
+import { database, toUserData } from "lib/api/prisma";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
 function withPermissions(handler: NextApiHandler) {
@@ -32,12 +32,12 @@ export default apiHandler({
                     },
                 },
             });
-            response.status(200).json(users);
+            response.status(200).json(users.map(toUserData));
             return;
         }
 
         const users = await database.user.findMany();
-        response.status(200).json(users);
+        response.status(200).json(users.map(toUserData));
     }),
     POST: withPermissions(async (request, response) => {
         const { username, password, manageUsers } = request.query;
@@ -57,7 +57,7 @@ export default apiHandler({
                 return null;
             });
 
-        if (user) response.status(201).json(user);
+        if (user) response.status(201).json(toUserData(user));
     }),
     PUT: withPermissions(async (request, response) => {
         const { id, username, password, manageUsers } = request.query;
@@ -79,7 +79,7 @@ export default apiHandler({
             },
             data: user,
         });
-        response.status(200).json(result);
+        response.status(200).json(toUserData(result));
     }),
     DELETE: withPermissions(async (request, response) => {
         const { id } = request.query;
@@ -95,6 +95,6 @@ export default apiHandler({
                 return null;
             });
 
-        if (result) response.status(200).json(result);
+        if (result) response.status(200).json(toUserData(result));
     }),
 });
