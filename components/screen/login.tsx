@@ -2,6 +2,7 @@ import { Button, CircularProgress, FormControl, FormHelperText, Grid, Paper, Tex
 import { FC, FormEventHandler, useState } from "react";
 import { UserData } from "types/api";
 import classes from "styles/login.module.scss";
+import { fetchAPI } from "lib/fetchwrapper";
 
 const LoginPage: FC<{
     onLogin: (result: { sid: string; user: UserData }) => void;
@@ -18,8 +19,9 @@ const LoginPage: FC<{
         const username = (event.currentTarget.elements.namedItem("username") as { value: string }).value;
         const password = (event.currentTarget.elements.namedItem("password") as { value: string }).value;
 
-        fetch(`api/auth/login?username=${username}&password=${password}`, {
-            method: "POST",
+        fetchAPI("POST", "api/auth/login", {
+            username,
+            password,
         })
             .then((response) => response.json())
             .then((data) => {
@@ -54,21 +56,26 @@ const LoginPage: FC<{
                             <></>
                         )}
                         <Button
-                                type="submit"
-                                variant="contained"
+                            type="submit"
+                            variant="contained"
+                            style={{
+                                marginTop: "20px",
+                            }}
+                        >
+                            {"Login"}
+                        </Button>
+                        {processing ? (
+                            <div
                                 style={{
+                                    margin: "auto",
                                     marginTop: "20px",
                                 }}
                             >
-                                {"Login"}
-
-                            </Button>
-                            {processing ? <div style={{
-                                margin: 'auto',
-                                marginTop: '20px'
-                            }}>
-                            <CircularProgress size={50}/>
-                            </div> : <></>}
+                                <CircularProgress size={50} />
+                            </div>
+                        ) : (
+                            <></>
+                        )}
                     </FormControl>
                 </form>
             </Paper>

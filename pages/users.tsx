@@ -28,6 +28,7 @@ import { FC, FormEvent, FormEventHandler, useEffect, useState } from "react";
 import { AppPage } from "types/app";
 import classes from "styles/users.module.scss";
 import { getFormElement } from "lib/formwrapper";
+import { GetServerSideProps } from "next";
 
 const Content: FC = () => {
     const [users, setUsers] = useState<User[] | undefined>(undefined);
@@ -178,5 +179,7 @@ const Page: AppPage = ({ user }) => {
     if (!user.manageUsers) return <ForbiddenPage />;
     return <Content />;
 };
+
+// TODO: add static props that gets the number of users
 
 export default Page;
