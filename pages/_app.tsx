@@ -8,19 +8,16 @@ import { useEffect, useState } from "react";
 import { UserData } from "types/api";
 import LoadingPage from "components/screen/loading";
 import LoginPage from "components/screen/login";
+import { fetchAPI } from "lib/fetchwrapper";
 
 function MyApp({ Component, pageProps }: AppProps) {
     const [user, setUser] = useState<UserData | null | undefined>(undefined);
 
     useEffect(() => {
-        fetch("api/auth/login", {
-            method: "GET",
-            headers: {
-                authorization: localStorage.getItem('auth') || ""
-            }
-        })
+        fetchAPI('GET','api/auth/login')
             .then((response) => response.json())
-            .then((data) => setUser(data.user || null));
+            .then(data => data.user || null)
+            .then(setUser);
     }, []);
 
     if (user === undefined) {
