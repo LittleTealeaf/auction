@@ -18,7 +18,7 @@ import {
     TableRow,
     TextField,
 } from "@mui/material";
-import { User } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import ForbiddenPage from "components/screen/forbidden";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import AddIcon from "@mui/icons-material/Add";
@@ -30,7 +30,7 @@ import classes from "styles/users.module.scss";
 import { getFormElement } from "lib/formwrapper";
 import { GetServerSideProps, GetStaticProps } from "next";
 
-const Content: FC = () => {
+const Content: FC<{userCount: number}> = ({userCount}) => {
     const [users, setUsers] = useState<User[] | undefined>(undefined);
 
     const [editing, setEditing] = useState(-1);
@@ -58,7 +58,7 @@ const Content: FC = () => {
                     <TableBody>
                         {users === undefined ? (
                             <>
-                                <TableRow>
+                                {new Array(userCount).fill(<TableRow>
                                     <TableCell>
                                         <Skeleton variant="rectangular" />
                                     </TableCell>
@@ -68,7 +68,7 @@ const Content: FC = () => {
                                     <TableCell>
                                         <Skeleton variant="rectangular" />
                                     </TableCell>
-                                </TableRow>
+                                </TableRow>)}
                             </>
                         ) : (
                             users.map((user, index) => <UserRow key={user.id} user={user} index={index} editUser={setEditing} />)
@@ -181,10 +181,16 @@ const Page: AppPage = ({ user }) => {
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-    
+
+    const database = new PrismaClient();
+
+    const users = await database.user.findMany();
+
 
     return {
-        props: {}
+        props: {
+            userCount: users.length
+        }
     }
 }
 
