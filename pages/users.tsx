@@ -21,7 +21,7 @@ import {
 import { User } from "@prisma/client";
 import ForbiddenPage from "components/screen/forbidden";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import RefreshIcon from '@mui/icons-material/Refresh';
+import RefreshIcon from "@mui/icons-material/Refresh";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import { fetchAPI, getStatusJson } from "lib/fetchwrapper";
@@ -33,20 +33,20 @@ import { GetStaticProps } from "next";
 import Head from "next/head";
 import { database } from "lib/api/prisma";
 
-const Content: FC<{userCount: number}> = ({userCount}) => {
+const Content: FC<{ userCount: number }> = ({ userCount }) => {
     const [users, setUsers] = useState<User[] | undefined>(undefined);
 
     const [editing, setEditing] = useState(-1);
 
     const loadUsers = () => {
         fetchAPI("GET", "api/user").then(getStatusJson(200)).then(setUsers);
-    }
+    };
 
     useEffect(loadUsers, []);
     return (
         <>
             <Head>
-               <title>User Management</title>
+                <title>User Management</title>
             </Head>
             <TableContainer
                 component={Paper}
@@ -60,10 +60,13 @@ const Content: FC<{userCount: number}> = ({userCount}) => {
                         <TableCell>Password</TableCell>
                         <TableCell>Permissions</TableCell>
                         <TableCell>
-                            <IconButton arial-label="refresh" onClick={(_) => {
-                                setUsers(undefined);
-                                loadUsers();
-                            }}>
+                            <IconButton
+                                arial-label="refresh"
+                                onClick={(_) => {
+                                    setUsers(undefined);
+                                    loadUsers();
+                                }}
+                            >
                                 <RefreshIcon />
                             </IconButton>
                         </TableCell>
@@ -71,17 +74,19 @@ const Content: FC<{userCount: number}> = ({userCount}) => {
                     <TableBody>
                         {users === undefined ? (
                             <>
-                                {new Array(userCount).fill(<TableRow>
-                                    <TableCell>
-                                        <Skeleton variant="rectangular" />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Skeleton variant="rectangular" />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Skeleton variant="rectangular" />
-                                    </TableCell>
-                                </TableRow>)}
+                                {new Array(userCount).fill(
+                                    <TableRow>
+                                        <TableCell>
+                                            <Skeleton variant="rectangular" />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Skeleton variant="rectangular" />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Skeleton variant="rectangular" />
+                                        </TableCell>
+                                    </TableRow>
+                                )}
                             </>
                         ) : (
                             users.map((user, index) => <UserRow key={user.id} user={user} index={index} editUser={setEditing} />)
@@ -92,12 +97,15 @@ const Content: FC<{userCount: number}> = ({userCount}) => {
                     </Fab>
                 </Table>
             </TableContainer>
-            <EditUser user={!users || editing == -1 ? null : users[editing]} close={(refresh) => {
-                setEditing(-1);
-                if(refresh) {
-                    loadUsers();
-                }
-            }} />
+            <EditUser
+                user={!users || editing == -1 ? null : users[editing]}
+                close={(refresh) => {
+                    setEditing(-1);
+                    if (refresh) {
+                        loadUsers();
+                    }
+                }}
+            />
         </>
     );
 };
@@ -146,22 +154,21 @@ const UserRow: FC<UserRowParams> = ({ user, index, editUser }) => {
 };
 
 const EditUser: FC<{ user: User | null; close: (refresh: boolean) => void }> = ({ user, close }) => {
-
-
     const onSubmit: FormEventHandler<HTMLFormElement> = (event) => {
         event.preventDefault();
 
         const data = {
             id: user?.id,
-            username: getFormElement<Element & {value: string}>(event,'username').value,
-            password: getFormElement<Element & {value: string}>(event, "password").value,
-            manageUsers: getFormElement<Element & {checked: boolean}>(event,"manageUsers").checked
-        }
+            username: getFormElement<Element & { value: string }>(event, "username").value,
+            password: getFormElement<Element & { value: string }>(event, "password").value,
+            manageUsers: getFormElement<Element & { checked: boolean }>(event, "manageUsers").checked,
+        };
         //TODO: PREVENT REMOVING YOUR OWN ACCESS
 
-
-        fetchAPI('PUT','api/user',data).then(getStatusJson(200)).then((_) => close(true))
-    }
+        fetchAPI("PUT", "api/user", data)
+            .then(getStatusJson(200))
+            .then((_) => close(true));
+    };
 
     return (
         <Modal open={user != null} onClose={close} className={classes.edit}>
@@ -180,7 +187,9 @@ const EditUser: FC<{ user: User | null; close: (refresh: boolean) => void }> = (
                         </FormGroup>
                     </FormControl>
                     <FormControl className={classes.actions}>
-                    <Button className={classes.submit} type="submit">Save</Button>
+                        <Button className={classes.submit} type="submit">
+                            Save
+                        </Button>
                     </FormControl>
                 </form>
             </Paper>
@@ -188,25 +197,21 @@ const EditUser: FC<{ user: User | null; close: (refresh: boolean) => void }> = (
     );
 };
 
-const Page: AppPage<{userCount: number}> = ({ user, userCount }) => {
+const Page: AppPage<{ userCount: number }> = ({ user, userCount }) => {
     if (!user.manageUsers) return <ForbiddenPage />;
-    return <Content userCount={userCount}/>;
+    return <Content userCount={userCount} />;
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-
-
-
     const users = await database.user.findMany();
-
 
     return {
         props: {
-            userCount: users.length
+            userCount: users.length,
         },
-        revalidate: 60 * 10
-    }
-}
+        revalidate: 60 * 10,
+    };
+};
 
 // TODO: add static props that gets the number of users
 
