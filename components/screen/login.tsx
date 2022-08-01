@@ -54,15 +54,21 @@ const LoginPage: FC<{
                             <></>
                         )}
                         <Button
-                            type="submit"
-                            variant="contained"
-                            style={{
-                                marginTop: "20px",
-                            }}
-                        >
-                            {"Login"}
-                        </Button>
-                        {processing ? <CircularProgress /> : <></>}
+                                type="submit"
+                                variant="contained"
+                                style={{
+                                    marginTop: "20px",
+                                }}
+                            >
+                                {"Login"}
+
+                            </Button>
+                            {processing ? <div style={{
+                                margin: 'auto',
+                                marginTop: '20px'
+                            }}>
+                            <CircularProgress size={50}/>
+                            </div> : <></>}
                     </FormControl>
                 </form>
             </Paper>

@@ -15,7 +15,7 @@ const LoadingPage: FC = () => {
             }}
         >
             <CircularProgress
-                size='30vw'
+                size='20vw'
             />
         </Grid>
     );
