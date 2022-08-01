@@ -162,7 +162,7 @@ const EditUser: FC<{ user: User | null; close: (refresh: boolean) => void }> = (
                     <FormControl className={classes.permissions} sx={{ m: 3 }} component="fieldset" variant="standard">
                         <FormLabel component="legend">Permissions</FormLabel>
                         <FormGroup>
-                            <FormControlLabel control={<Checkbox id="manageUsers" defaultChecked={user?.manageUsers || false} />} label="Manage Uers" />
+                            <FormControlLabel control={<Checkbox id="manageUsers" defaultChecked={user?.manageUsers || false} />} label="Manage Users" />
                         </FormGroup>
                     </FormControl>
                     <FormControl className={classes.actions}>
