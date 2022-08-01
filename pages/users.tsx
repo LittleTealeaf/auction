@@ -60,7 +60,10 @@ const Content: FC<{userCount: number}> = ({userCount}) => {
                         <TableCell>Password</TableCell>
                         <TableCell>Permissions</TableCell>
                         <TableCell>
-                            <IconButton arial-label="refresh" onClick={(_) => loadUsers()}>
+                            <IconButton arial-label="refresh" onClick={(_) => {
+                                setUsers(undefined);
+                                loadUsers();
+                            }}>
                                 <RefreshIcon />
                             </IconButton>
                         </TableCell>
