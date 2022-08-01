@@ -21,6 +21,7 @@ import {
 import { User } from "@prisma/client";
 import ForbiddenPage from "components/screen/forbidden";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import RefreshIcon from '@mui/icons-material/Refresh';
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import { fetchAPI, getStatusJson } from "lib/fetchwrapper";
@@ -58,7 +59,11 @@ const Content: FC<{userCount: number}> = ({userCount}) => {
                         <TableCell>Username</TableCell>
                         <TableCell>Password</TableCell>
                         <TableCell>Permissions</TableCell>
-                        <TableCell></TableCell>
+                        <TableCell>
+                            <IconButton arial-label="refresh" onClick={(_) => loadUsers()}>
+                                <RefreshIcon />
+                            </IconButton>
+                        </TableCell>
                     </TableHead>
                     <TableBody>
                         {users === undefined ? (
