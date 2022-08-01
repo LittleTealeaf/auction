@@ -71,7 +71,7 @@ export default apiHandler({
 
         if (username) user.username = String(username);
         if (password !== undefined) user.password = password == null ? null : String(password);
-        if (manageUsers !== undefined) user.manageUsers = Boolean(manageUsers);
+        if (manageUsers !== undefined) user.manageUsers = manageUsers === 'true';
 
         const result = await database.user.update({
             where: {
