@@ -29,6 +29,7 @@ import { AppPage } from "types/app";
 import classes from "styles/users.module.scss";
 import { getFormElement } from "lib/formwrapper";
 import { GetStaticProps } from "next";
+import Head from "next/head";
 
 const Content: FC<{userCount: number}> = ({userCount}) => {
     const [users, setUsers] = useState<User[] | undefined>(undefined);
@@ -42,6 +43,9 @@ const Content: FC<{userCount: number}> = ({userCount}) => {
     useEffect(loadUsers, []);
     return (
         <>
+            <Head>
+               <title>User Management</title>
+            </Head>
             <TableContainer
                 component={Paper}
                 style={{
@@ -190,7 +194,8 @@ export const getStaticProps: GetStaticProps = async () => {
     return {
         props: {
             userCount: users.length
-        }
+        },
+        revalidate: 60 * 10
     }
 }
 
