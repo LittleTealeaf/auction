@@ -24,11 +24,11 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import { fetchAPI, getStatusJson } from "lib/fetchwrapper";
-import { FC, FormEvent, FormEventHandler, useEffect, useState } from "react";
+import { FC, FormEventHandler, useEffect, useState } from "react";
 import { AppPage } from "types/app";
 import classes from "styles/users.module.scss";
 import { getFormElement } from "lib/formwrapper";
-import { GetServerSideProps, GetStaticProps } from "next";
+import { GetStaticProps } from "next";
 
 const Content: FC<{userCount: number}> = ({userCount}) => {
     const [users, setUsers] = useState<User[] | undefined>(undefined);
