@@ -18,7 +18,7 @@ import {
     TableRow,
     TextField,
 } from "@mui/material";
-import { PrismaClient, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import ForbiddenPage from "components/screen/forbidden";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import AddIcon from "@mui/icons-material/Add";
