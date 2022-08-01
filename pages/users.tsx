@@ -30,6 +30,7 @@ import classes from "styles/users.module.scss";
 import { getFormElement } from "lib/formwrapper";
 import { GetStaticProps } from "next";
 import Head from "next/head";
+import { database } from "lib/api/prisma";
 
 const Content: FC<{userCount: number}> = ({userCount}) => {
     const [users, setUsers] = useState<User[] | undefined>(undefined);
@@ -186,7 +187,7 @@ const Page: AppPage<{userCount: number}> = ({ user, userCount }) => {
 
 export const getStaticProps: GetStaticProps = async () => {
 
-    const database = new PrismaClient();
+
 
     const users = await database.user.findMany();
 
