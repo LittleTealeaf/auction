@@ -6,7 +6,7 @@ export function fetchAPI(method: string, url: string, params: { [key: string]: a
         {
             method,
             headers: {
-                authorization: String(localStorage.getItem("auth")),
+                authorization: String(localStorage.getItem("auth") || ""),
             },
         }
     );
