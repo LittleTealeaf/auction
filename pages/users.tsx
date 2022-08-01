@@ -175,9 +175,9 @@ const EditUser: FC<{ user: User | null; close: (refresh: boolean) => void }> = (
     );
 };
 
-const Page: AppPage = ({ user }) => {
+const Page: AppPage<{userCount: number}> = ({ user, userCount }) => {
     if (!user.manageUsers) return <ForbiddenPage />;
-    return <Content />;
+    return <Content userCount={userCount}/>;
 };
 
 export const getStaticProps: GetStaticProps = async () => {
