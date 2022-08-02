@@ -4,27 +4,32 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import type { AppProps } from "next/app";
-import { FC, MouseEventHandler, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { UserData } from "types/api";
 import LoadingPage from "components/screen/loading";
 import LoginPage from "components/screen/login";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import { fetchAPI } from "lib/app/fetch";
-import { Button, Menu, MenuItem } from "@mui/material";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { Logout } from "@mui/icons-material";
-import Navigation from "components/navigation";
+import Navigation, { drawerWidth } from "components/navigation";
+import { Box } from "@mui/system";
 
 function AppRoot({ Component, pageProps }: AppProps) {
+
     const [user, setUser] = useState<UserData | null | undefined>(undefined);
 
-
     useEffect(() => {
+        const userCache = localStorage.getItem('user');
+
+        if(userCache) {
+            setUser(JSON.parse(userCache) as UserData);
+        }
+
         fetchAPI("GET", "api/auth/login")
             .then((response) => response.json())
             .then((data) => data.user || null)
-            .then(setUser);
+            .then((user) => {
+                setUser(user);
+                localStorage.setItem("user",JSON.stringify(user));
+            });
     }, []);
 
 
@@ -49,7 +54,11 @@ function AppRoot({ Component, pageProps }: AppProps) {
     return (
         <>
             <Navigation user={user} />
-            <Component {...pageProps} user={user} />
+            <Box sx={{
+                ml: { md: `${drawerWidth}px` },
+            }}>
+                <Component {...pageProps} user={user} />
+            </Box>
         </>
     );
 }

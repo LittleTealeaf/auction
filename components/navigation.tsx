@@ -10,7 +10,7 @@ import { Logout } from "@mui/icons-material";
 import css from "styles/navigation.module.scss";
 import { fetchAPI } from "lib/app/fetch";
 
-const drawerWidth = 240;
+export const drawerWidth = 240;
 
 function buildNavItem({ icon, primary, secondary, href }: { icon?: MuiIcon; primary: string; secondary?: string; href?: string; onClick?: () => void }) {
     return (
@@ -24,79 +24,69 @@ function buildNavItem({ icon, primary, secondary, href }: { icon?: MuiIcon; prim
 }
 
 const Navigation: FC<{ user: UserData }> = ({ user }) => {
-
     const [showDrawer, setShowDrawer] = useState(false);
 
     const toggleDrawer = () => setShowDrawer(!showDrawer);
 
     const drawerContents = <DrawerContents user={user} />;
 
-
-
     return (
         <>
-            <div>
-                <AppBar
-                    position="fixed"
+            <AppBar
+                position="static"
+                sx={{
+                    width: { md: `calc(100% - ${drawerWidth}px)` },
+                    ml: { md: `${drawerWidth}px` },
+                }}
+            >
+                <Toolbar className={css.toolbar}>
+                    <IconButton color="inherit" aria-label="open drawer" edge="start" onClick={toggleDrawer} sx={{ mr: 2, display: { md: "none" } }}>
+                        <MenuIcon />
+                    </IconButton>
+                    <div className={css.spacer} />
+                    <UserProfile user={user} />
+                </Toolbar>
+            </AppBar>
+            <Box
+                component="nav"
+
+                sx={{
+                    width: {
+                        sm: drawerWidth,
+                    },
+                    flexShrink: {
+                        sm: 0,
+                    },
+                }}
+                aria-label="Navigation"
+            >
+                <Drawer
+                    variant="temporary"
+                    open={showDrawer}
+                    onClose={() => setShowDrawer(false)}
+                    ModalProps={{
+                        keepMounted: true, // Better open performance on mobile.
+                    }}
                     sx={{
-                        width: { md: `calc(100% - ${drawerWidth}px)` },
-                        ml: { md: `${drawerWidth}px` },
+                        display: { xs: "block", md: "none" },
+                        "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
                     }}
                 >
-                    <Toolbar className={css.toolbar}>
-                        <IconButton
-                            color="inherit"
-                            aria-label="open drawer"
-                            edge="start"
-                              onClick={toggleDrawer}
-                            sx={{ mr: 2, display: { md: "none" } }}
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                        <div className={css.spacer} />
-                        <UserProfile user={user} />
-                    </Toolbar>
-                </AppBar>
-                <Box
-                    component="nav"
+                    {drawerContents}
+                </Drawer>
+                <Drawer
+                    variant="permanent"
                     sx={{
-                        width: {
-                            sm: drawerWidth,
-                        },
-                        flexShrink: {
-                            sm: 0,
+                        display: { xs: "none", md: "block" },
+                        "& .MuiDrawer-paper": {
+                            boxSizing: "border-box",
+                            width: drawerWidth,
                         },
                     }}
-                    aria-label="Navigation"
                 >
-                    <Drawer
-                        variant="temporary"
-                        open={showDrawer}
-                        onClose={() => setShowDrawer(false)}
-                        ModalProps={{
-                            keepMounted: true, // Better open performance on mobile.
-                        }}
-                        sx={{
-                            display: { xs: "block", md: "none" },
-                            "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
-                        }}
-                    >
-                        {drawerContents}
-                    </Drawer>
-                    <Drawer
-                        variant="permanent"
-                        sx={{
-                            display: { xs: "none", md: "block" },
-                            "& .MuiDrawer-paper": {
-                                boxSizing: "border-box",
-                                width: drawerWidth,
-                            },
-                        }}
-                    >
-                        {drawerContents}
-                    </Drawer>
-                </Box>
-            </div>
+                    {drawerContents}
+                </Drawer>
+            </Box>
         </>
     );
 };
@@ -128,26 +118,6 @@ const DrawerContents: FC<{ user: UserData }> = ({ user }) => {
 
 export default Navigation;
 
-//export const Navigation: FC<{ user: UserData }> = ({ user }) => {
-//     const [showDrawer, setShowDrawer] = useState(false);
-//     const toggleDrawer = () => setShowDrawer(!showDrawer);
-
-//     return (
-//         <>
-//             <AppBar position="fixed">
-//                 <Toolbar className={css.toolbar}>
-//                     <div>Auction Manager</div>
-//                     <Spacer />
-//                     <UserProfile user={user} />
-//                 </Toolbar>
-//             </AppBar>
-//             <Drawer open={showDrawer} onClose={() => setShowDrawer(false)}>
-//                 <List>awefawefwef</List>
-//             </Drawer>
-//         </>
-//     );
-// };
-
 export const UserProfile: FC<{ user: UserData }> = ({ user }) => {
     const [anchorEl, setAnchorE1] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -165,6 +135,7 @@ export const UserProfile: FC<{ user: UserData }> = ({ user }) => {
             .then((response) => response.json())
             .then((data) => {
                 const { oldSid, message, error } = data;
+                localStorage.setItem('user',undefined);
                 if (oldSid) {
                     document.location.href = "/";
                 }

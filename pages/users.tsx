@@ -7,7 +7,6 @@ import { AppPage } from "types/app";
 
 
 const Page: AppPage = ({user}) => {
-
     if(!user.manageUsers) return <ForbiddenPage />
     return <PageContent />
 }
@@ -22,7 +21,7 @@ const PageContent: FC = ({}) => {
 
     useEffect(loadUsers,[]);
 
-    return <>awef</>
+    return <><div>I am a brid</div></>
 }
 
 
