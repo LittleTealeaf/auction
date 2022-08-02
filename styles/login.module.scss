@@ -25,19 +25,18 @@
     width: fit-content;
     margin: auto;
     margin-top: 20px;
+}
 
-    .progress {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        margin-top: -12px;
-        margin-left: -12px;
-    }
+.progress {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -12px;
+    margin-left: -12px;
 }
 
 
 .error {
     color: red;
     text-align: center;
-    
 }

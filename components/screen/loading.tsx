@@ -1,6 +1,7 @@
-import { CircularProgress, Grid } from "@mui/material";
+import { CircularProgress, Typography } from "@mui/material";
 import Head from "next/head";
 import { FC } from "react";
+import css from 'styles/loading.module.scss'
 
 const LoadingPage: FC = () => {
     return (
@@ -8,17 +9,12 @@ const LoadingPage: FC = () => {
             <Head>
                 <title>Loading...</title>
             </Head>
-            <Grid
-                justifyContent="center"
-                alignItems="center"
-                style={{
-                    width: "100%",
-                    height: "100vh",
-                    display: "flex",
-                }}
-            >
-                <CircularProgress size="20vw" />
-            </Grid>
+            <div className={css.root}>
+                <div>
+                    <Typography variant="h4">Loading</Typography>
+                    <CircularProgress size="100px" />
+                </div>
+            </div>
         </>
     );
 };

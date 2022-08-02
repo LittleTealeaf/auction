@@ -8,13 +8,12 @@ import { FC, MouseEventHandler, useEffect, useState } from "react";
 import { UserData } from "types/api";
 import LoadingPage from "components/screen/loading";
 import LoginPage from "components/screen/login";
-import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from "@mui/material/ListItemText";
+import ListItemIcon from "@mui/material/ListItemIcon";
 import { fetchAPI } from "lib/app/fetch";
-import { AppBar, Box, Button, Container, Drawer, IconButton, List, Menu, MenuItem, Toolbar } from "@mui/material";
+import { AppBar, Button, Drawer, List, Menu, MenuItem, Toolbar } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import css from "styles/app.module.scss";
-import MenuIcon from "@mui/icons-material/Menu";
 import { Logout } from "@mui/icons-material";
 
 function AppRoot({ Component, pageProps }: AppProps) {
@@ -48,15 +47,15 @@ function AppRoot({ Component, pageProps }: AppProps) {
 function AppPage({ Component, pageProps, user }: AppProps & { user: UserData }) {
     const [showDrawer, setShowDrawer] = useState(false);
 
-    const handleOpenNavMenu: MouseEventHandler<HTMLButtonElement> = (event) => {
-        setShowDrawer(!showDrawer);
-    };
+    const toggleDrawer = () => setShowDrawer(!showDrawer);
+
+    //app drawer for pages, have permenately showing just like the example
 
     return (
         <>
             <AppBar position="static">
                 <Toolbar className={css.toolbar}>
-                    <div>serof</div>
+                    <div>Auction Manager</div>
                     <Spacer />
                     <UserProfile user={user} />
                 </Toolbar>
@@ -70,8 +69,6 @@ function AppPage({ Component, pageProps, user }: AppProps & { user: UserData }) 
 }
 
 export const UserProfile: FC<{ user: UserData }> = ({ user }) => {
-
-
     const [anchorEl, setAnchorE1] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
@@ -84,13 +81,15 @@ export const UserProfile: FC<{ user: UserData }> = ({ user }) => {
     };
 
     const actionLogout = () => {
-        fetchAPI('DELETE','api/auth/login').then(response => response.json()).then(data => {
-            const {oldSid, message, error} = data;
-            if(oldSid) {
-                document.location.href="/"
-            }
-        })
-    }
+        fetchAPI("DELETE", "api/auth/login")
+            .then((response) => response.json())
+            .then((data) => {
+                const { oldSid, message, error } = data;
+                if (oldSid) {
+                    document.location.href = "/";
+                }
+            });
+    };
 
     return (
         <>
@@ -119,9 +118,7 @@ export const UserProfile: FC<{ user: UserData }> = ({ user }) => {
                     <ListItemIcon>
                         <Logout />
                     </ListItemIcon>
-                    <ListItemText>
-                        {"Logout"}
-                    </ListItemText>
+                    <ListItemText>{"Logout"}</ListItemText>
                 </MenuItem>
             </Menu>
         </>

@@ -79,6 +79,19 @@ export default apiHandler({
             },
             data: user,
         });
+
+        //Remove all sessions except for current session
+        await database.session.updateMany({
+            where: {
+                NOT: {
+                    sid: String(request.headers.authorization)
+                }
+            },
+            data: {
+                expired: true
+            }
+        });
+
         response.status(200).json(toUserData(result));
     }),
     DELETE: withPermissions(async (request, response) => {
