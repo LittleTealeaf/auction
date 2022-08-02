@@ -9,3 +9,5 @@ export type UserData = {
     username: string;
     manageUsers: boolean;
 };
+
+export type ApiMethod = "GET" | "POST" | "PATCH" | "DELETE" | "PUT" | "OPTIONS" | "HEAD";

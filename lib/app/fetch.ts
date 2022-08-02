@@ -1,4 +1,6 @@
-export function fetchAPI(method: string, url: string, params: { [key: string]: any } = {}) {
+import { ApiMethod } from "types/api";
+
+export function fetchAPI(method: ApiMethod, url: string, params: { [key: string]: any } = {}) {
     return fetch(
         `${url}?${Object.entries(params)
             .map(([key, value]) => `${key}=${value}`)
