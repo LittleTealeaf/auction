@@ -29,3 +29,13 @@ If you forget the password, you can use the following command to run and open up
 ```bash
 npm run database
 ```
+
+
+## Additional Notes
+
+### "Help! I've lost access to the admin account!"
+
+The admin account is protected, therefore it cannot be modified except for the password. Thus, if you've lost your admin account password, you can just reset it via
+```bash
+npm run seed
+```

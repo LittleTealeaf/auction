@@ -56,6 +56,7 @@ function AppRoot({ Component, pageProps }: AppProps) {
             <Navigation user={user} />
             <Box sx={{
                 ml: { md: `${drawerWidth}px` },
+                width: {md: `calc(100% - ${drawerWidth}px)`}
             }}>
                 <Component {...pageProps} user={user} />
             </Box>

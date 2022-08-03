@@ -1,7 +1,7 @@
 import { FC, MouseEventHandler, useState } from "react";
 import { UserData } from "types/api";
 import { MuiIcon } from "types/app";
-import { AppBar, Box, Button, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Button, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, Toolbar } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -49,7 +49,6 @@ const Navigation: FC<{ user: UserData }> = ({ user }) => {
             </AppBar>
             <Box
                 component="nav"
-
                 sx={{
                     width: {
                         sm: drawerWidth,
@@ -135,7 +134,7 @@ export const UserProfile: FC<{ user: UserData }> = ({ user }) => {
             .then((response) => response.json())
             .then((data) => {
                 const { oldSid, message, error } = data;
-                localStorage.setItem('user',undefined);
+                localStorage.removeItem('user');
                 if (oldSid) {
                     document.location.href = "/";
                 }

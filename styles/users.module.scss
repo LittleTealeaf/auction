@@ -1,53 +1,13 @@
-.table {
-    .password {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-width: 200px;
-    }
-}
-
 .fab {
     position: absolute;
-    right: 16px;
-    bottom: 16px;
+    bottom: 15px;
+    right: 15px;
+}
+
+.container {
+    width: 100%;
 }
 
 .edit {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100vw;
-    height: 100vh;
-
-    h1 {
-        text-align: center;
-        width: 100%;
-    }
-
-    .container {
-        padding: 20px;
-
-        > form {
-            display: flex;
-            flex-direction: column;
-        }
-    }
-
-    .userpass {
-        display: flex;
-        flex-direction: row;
-        > * {
-            margin-inline: 2.5px;
-        }
-    }
-    .permissions {
-        width: 100%;
-    }
-
-    .actions {
-        margin-left: auto;
-        width: fit-content;
-    }
-
+    padding: 20px;
 }
