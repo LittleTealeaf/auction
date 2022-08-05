@@ -11,24 +11,24 @@ import LoginPage from "components/screen/login";
 import { fetchAPI } from "lib/app/fetch";
 import Navigation, { drawerWidth } from "components/navigation";
 import { Box } from "@mui/system";
+import { getSessionUser, setSessionAuth, setSessionUser } from "lib/app/session";
 
 function AppRoot({ Component, pageProps }: AppProps) {
 
     const [user, setUser] = useState<UserData | null | undefined>(undefined);
 
     useEffect(() => {
-        const userCache = localStorage.getItem('user');
-
-        if(userCache) {
-            setUser(JSON.parse(userCache) as UserData);
+        const userCache = getSessionUser();
+        if(userCache != null) {
+            setUser(userCache);
         }
 
         fetchAPI("GET", "api/auth/login")
             .then((response) => response.json())
-            .then((data) => data.user || null)
+            .then((data) => data.user as UserData || null)
             .then((user) => {
                 setUser(user);
-                localStorage.setItem("user",JSON.stringify(user));
+                setSessionUser(user);
             });
     }, []);
 
@@ -44,7 +44,7 @@ function AppRoot({ Component, pageProps }: AppProps) {
         return (
             <LoginPage
                 onLogin={({ sid, user }) => {
-                    localStorage.setItem("auth", sid);
+                    setSessionAuth(sid);
                     setUser(user);
                 }}
             />

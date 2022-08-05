@@ -1,7 +1,7 @@
 import { Button, Paper, Typography } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import LogoutIcon from "@mui/icons-material/Logout";
-import css from "styles/forbidden.module.scss";
+import css from "styles/components/screen/forbidden.module.scss";
 import { MouseEventHandler } from "react";
 import { fetchAPI } from "lib/app/fetch";
 

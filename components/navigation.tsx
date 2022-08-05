@@ -7,7 +7,7 @@ import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { Logout } from "@mui/icons-material";
-import css from "styles/navigation.module.scss";
+import css from "styles/components/navigation.module.scss";
 import { fetchAPI } from "lib/app/fetch";
 
 export const drawerWidth = 240;

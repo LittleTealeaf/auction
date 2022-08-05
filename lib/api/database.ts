@@ -2,7 +2,7 @@ import { PrismaClient, User } from "@prisma/client";
 import { NextApiRequest } from "next";
 import { UserData } from "types/api";
 
-export const database = new PrismaClient();
+export const prisma = new PrismaClient();
 
 export async function getUser(request: NextApiRequest) {
 
@@ -11,7 +11,7 @@ export async function getUser(request: NextApiRequest) {
     }
 
     //Get session
-    const session = await database.session.findFirst({
+    const session = await prisma.session.findFirst({
         where: {
             sid: request.headers.authorization,
         },
@@ -21,7 +21,7 @@ export async function getUser(request: NextApiRequest) {
     if (session == null || session.expired) return null;
 
     //Get user
-    const user = await database.user.findFirst({
+    const user = await prisma.user.findFirst({
         where: {
             id: session.userId,
         },
@@ -30,13 +30,14 @@ export async function getUser(request: NextApiRequest) {
     return user;
 }
 
+
 export function toUserData(user: User): UserData {
     const {password, ...userData} = user;
     return userData;
 }
 
 export async function createSession(user: User) {
-    return await database.session.create({
+    return await prisma.session.create({
         data: {
             userId: user.id,
         },

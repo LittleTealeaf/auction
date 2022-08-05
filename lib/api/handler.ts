@@ -1,6 +1,6 @@
 import { User } from "@prisma/client";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
-import { getUser } from "./prisma";
+import { getUser } from "./database";
 
 export type Methods = {
     [key: string]: NextApiHandler;
@@ -28,3 +28,4 @@ export async function requireLogin(request: NextApiRequest, response: NextApiRes
 
     return user;
 }
+

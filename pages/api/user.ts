@@ -1,5 +1,5 @@
 import apiHandler, { requireLogin } from "lib/api/handler";
-import { database, toUserData } from "lib/api/prisma";
+import { prisma, toUserData } from "lib/api/database";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
 function withPermissions(handler: NextApiHandler) {
@@ -19,13 +19,13 @@ export default apiHandler({
         const { id, username } = request.query;
 
         if (id) {
-            const user = await database.user.findFirst({ where: { id: Number(id) } });
+            const user = await prisma.user.findFirst({ where: { id: Number(id) } });
             response.status(200).json(user);
             return;
         }
 
         if (username) {
-            const users = await database.user.findMany({
+            const users = await prisma.user.findMany({
                 where: {
                     username: {
                         contains: String(username),
@@ -36,7 +36,7 @@ export default apiHandler({
             return;
         }
 
-        const users = await database.user.findMany();
+        const users = await prisma.user.findMany();
         response.status(200).json(users.map(toUserData));
     }),
     POST: withPermissions(async (request, response) => {
@@ -48,7 +48,7 @@ export default apiHandler({
             manageUsers: Boolean(manageUsers) || false,
         };
 
-        const user = await database.user
+        const user = await prisma.user
             .create({
                 data,
             })
@@ -62,7 +62,7 @@ export default apiHandler({
     PUT: withPermissions(async (request, response) => {
         const { id, username, password, manageUsers } = request.query;
 
-        var user = await database.user.findFirst({
+        var user = await prisma.user.findFirst({
             where: {
                 id: Number(id),
             },
@@ -73,7 +73,7 @@ export default apiHandler({
         if (password !== undefined) user.password = password == null ? null : String(password);
         if (manageUsers !== undefined) user.manageUsers = manageUsers === 'true';
 
-        const result = await database.user.update({
+        const result = await prisma.user.update({
             where: {
                 id: Number(id),
             },
@@ -81,7 +81,7 @@ export default apiHandler({
         });
 
         //Remove all sessions except for current session
-        await database.session.updateMany({
+        await prisma.session.updateMany({
             where: {
                 NOT: {
                     sid: String(request.headers.authorization)
@@ -97,7 +97,7 @@ export default apiHandler({
     DELETE: withPermissions(async (request, response) => {
         const { id } = request.query;
 
-        const result = await database.user
+        const result = await prisma.user
             .delete({
                 where: {
                     id: Number(id),

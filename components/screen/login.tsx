@@ -1,10 +1,11 @@
 import Head from "next/head";
 import { FC, FormEventHandler, useState } from "react";
 import { UserData } from "types/api";
-import scss from "styles/login.module.scss";
+import scss from "styles/components/screen/login.module.scss";
 import { Button, CircularProgress, FormHelperText, Paper, TextField, Typography } from "@mui/material";
 import { getFormElements } from "lib/app/form";
 import { fetchAPI } from "lib/app/fetch";
+import LoadingElement from "components/loading";
 
 export type LoginScreenParams = {
     onLogin: (result: { sid: string; user: UserData }) => void;
@@ -49,12 +50,15 @@ const LoginScreen: FC<LoginScreenParams> = ({ onLogin }) => {
                             <TextField id="password" label="password" variant="standard" type="password" required error={error != null} />
                         </div>
                         {error && <FormHelperText className={scss.error}>{error}</FormHelperText>}
-                        <div className={scss.submit}>
-                            <Button variant="contained" disabled={loading} type="submit">
-                                Sign in
-                            </Button>
-                            {loading && <CircularProgress size={24} className={scss.progress} />}
-                        </div>
+                        <LoadingElement
+                            style={{ marginTop: "20px" }}
+                            component={
+                                <Button variant="contained" disabled={loading} type="submit">
+                                    Sign in
+                                </Button>
+                            }
+                            active={loading}
+                        />
                     </form>
                 </Paper>
             </div>

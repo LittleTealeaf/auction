@@ -8,10 +8,16 @@ export function fetchAPI(method: ApiMethod, url: string, params: { [key: string]
         {
             method,
             headers: {
-                authorization: String(localStorage.getItem("auth") || ""),
+                authorization: String(sessionStorage.getItem("auth") || ""),
             },
         }
     );
+}
+
+export async function fetchJson<T = any>(method: ApiMethod, url: string, params: {[key: string]: any} = {}) {
+    const response = await fetchAPI(method, url, params);
+    const json = await response.json();
+    return json as T;
 }
 
 export function getStatusJson(code: number) {

@@ -1,6 +1,5 @@
-import { hash } from "argon2";
 import apiHandler from "lib/api/handler";
-import { createSession, database, getUser, toUserData } from "lib/api/prisma";
+import { createSession, prisma, getUser, toUserData } from "lib/api/database";
 
 export default apiHandler({
     GET: async (request, response) =>
@@ -15,7 +14,7 @@ export default apiHandler({
     POST: async (request, response) => {
         const { username, password } = request.query;
 
-        const user = await database.user.findFirst({
+        const user = await prisma.user.findFirst({
             where: {
                 username: String(username),
             },
@@ -24,7 +23,7 @@ export default apiHandler({
         if (user == null) return response.status(200).json({ message: "User not found" });
 
         if (user.password == null) {
-            user.password = await database.user
+            user.password = await prisma.user
                 .update({
                     where: { id: user.id },
                     data: { password: String(password) },
@@ -45,8 +44,8 @@ export default apiHandler({
             },
         });
     },
-    DELETE: async (request, response) => {
-        await database.session
+    DELETE: async (request, response) =>
+        prisma.session
             .update({
                 where: {
                     sid: request.headers.authorization,
@@ -62,6 +61,5 @@ export default apiHandler({
             })
             .catch((error) => {
                 response.status(500).json({ message: "Internal Database Error", error });
-            });
-    },
+            }),
 });
