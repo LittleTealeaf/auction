@@ -1,8 +1,6 @@
 import { createHmac } from "crypto";
-import { password } from "./secrets";
-
-const secret = password;
+import { passwordHash } from "./secrets";
 
 export function hashPassword(password: string) {
-    return createHmac('sha256',secret).update(password).digest('hex');
+    return createHmac('sha256',passwordHash).update(password).digest('hex');
 }

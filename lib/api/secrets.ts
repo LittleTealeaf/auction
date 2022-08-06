@@ -3,7 +3,7 @@ import { existsSync, readFile, readFileSync, writeFileSync } from "fs";
 const fn = "./.env.json";
 
 var existed: {
-    password?: string;
+    passwordHash?: string;
 } = {};
 
 function makeid(length: number) {
@@ -26,9 +26,9 @@ if (existsSync(fn)) {
 }
 
 const secrets = {
-    password: ensureKey(existed?.password),
+    passwordHash: ensureKey(existed?.passwordHash),
 };
 
 writeFileSync(fn,JSON.stringify(secrets));
 
-export const { password } = secrets;
+export const { passwordHash } = secrets;
