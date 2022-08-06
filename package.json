@@ -13,7 +13,9 @@
     "prisma": "prisma db push && prisma generate",
     "database": "prisma studio",
     "seed": "prisma db seed",
-    "dbreset": "rm ./prisma/database.db"
+    "production": "next build && next start",
+    "deletedb": "rimraf prisma/database.db",
+    "setupdb": "rimraf prisma/database.db && prisma db push && prisma generate && prisma db seed"
   },
   "dependencies": {
     "@emotion/react": "^11.9.3",
@@ -32,6 +34,7 @@
     "prisma": "^4.1.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "rimraf": "^3.0.2",
     "sass": "^1.54.0",
     "scss": "^0.2.4",
     "semver": "^7.3.7",
