@@ -1,31 +1,42 @@
-import { User } from "@prisma/client";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
-import { getUser } from "./database";
+import { prisma } from "./database";
 
-export type Methods = {
-    [key: string]: NextApiHandler;
+export type Method = "OPTIONS" | "GET" | "HEAD" | "PUT" | "POST" | "DELETE" | "PATCH";
+
+export type MethodList = {
+    [method in Method]?: NextApiHandler;
 };
 
-export default function apiHandler(methods: Methods) {
-    return async (request: NextApiRequest, response: NextApiResponse<any>) =>
-        new Promise(async (resolve) => {
-            if (Object.hasOwn(methods, request.method || "")) {
-                await methods[request.method || ""](request, response);
+export function apiHandler(methods: MethodList): NextApiHandler {
+    return async (request, response) => {
+        return new Promise(async (resolve) => {
+            const method = request.method as Method;
+            const handler = methods[method];
+            if (handler) {
+                await handler(request,response);
             } else {
-                response.status(405).json(`Invalud HTTP Method: ${request.method}`);
+                response.status(405).json({
+                    message: `Invalid HTTP Method: ${request.method}`,
+                });
             }
-            resolve(0);
+            resolve(true);
         });
+    };
 }
 
-export async function requireLogin(request: NextApiRequest, response: NextApiResponse<any>): Promise<User | null> {
-    const user = await getUser(request);
-
-    if (user == null) {
-        response.status(401).json({ message: "No valid authorization provided in header" });
-        return null;
-    }
-
-    return user;
+export async function requireLogin(method: NextApiHandler) {
+    const handler: NextApiHandler = async (request, response) => {
+        const authentication = String(request.headers.authentication);
+        const session = await prisma.session.findFirst({
+            where: {
+                sid: authentication,
+            },
+        });
+        if (session && !session.expired) {
+            await method(request, response);
+        } else {
+            response.status(401).json({ message: "No valid authentication provided" });
+        }
+    };
+    return handler;
 }
-

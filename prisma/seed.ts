@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { hashPassword } from "../lib/api/security";
 
 const db = new PrismaClient();
 
@@ -14,7 +15,7 @@ Promise.all([
                 return db.user.create({
                     data: {
                         username: "admin",
-                        password: "admin",
+                        password: hashPassword('admin'),
                         manageUsers: true,
                         protected: true,
                     },
@@ -26,7 +27,7 @@ Promise.all([
                     },
                     data: {
                         username: "admin",
-                        password: "admin",
+                        password: hashPassword('admin'),
                         protected: true,
                         manageUsers: true,
                     },
