@@ -1,18 +1,18 @@
-import { prisma, toUserData } from "lib/api/database";
+import { database, toUserData } from "lib/api/database";
 import { apiHandler } from "lib/api/handler";
 import { hashPassword } from "lib/api/security";
 
 export default apiHandler({
     GET: async (request, response) => {
         const sid = String(request.headers.authorization);
-        const session = await prisma.session.findFirst({ where: { sid } });
+        const session = await database.session.findFirst({ where: { sid } });
 
         if (!session || session.expired) {
             response.status(401).json({ message: "Authorization key not valid" });
             return;
         }
 
-        const user = await prisma.user.findFirst({ where: { id: session.userId } });
+        const user = await database.user.findFirst({ where: { id: session.userId } });
 
         if (!user) {
             response.status(500).json({ message: `User ID ${session.userId} not found` });
@@ -27,7 +27,7 @@ export default apiHandler({
         const { username, password } = request.query as { username?: string; password?: string };
         const hashed = hashPassword(password || "");
 
-        const user = await prisma.user.findFirst({
+        const user = await database.user.findFirst({
             where: {
                 username,
                 password: hashed,
@@ -39,7 +39,7 @@ export default apiHandler({
             return;
         }
 
-        const session = await prisma.session.create({
+        const session = await database.session.create({
             data: {
                 userId: user.id,
             },
@@ -51,7 +51,7 @@ export default apiHandler({
         });
     },
     DELETE: async (request, response) => {
-        await prisma.session
+        await database.session
             .update({
                 where: {
                     sid: request.headers.authorization,

@@ -1,11 +1,11 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "./database";
-
-export type Method = "OPTIONS" | "GET" | "HEAD" | "PUT" | "POST" | "DELETE" | "PATCH";
+import { Method } from "types/api";
+import { database } from "./database";
 
 export type MethodList = {
     [method in Method]?: NextApiHandler;
 };
+
 
 export function apiHandler(methods: MethodList): NextApiHandler {
     return async (request, response) => {
@@ -24,19 +24,20 @@ export function apiHandler(methods: MethodList): NextApiHandler {
     };
 }
 
-export async function requireLogin(method: NextApiHandler) {
-    const handler: NextApiHandler = async (request, response) => {
-        const authentication = String(request.headers.authentication);
-        const session = await prisma.session.findFirst({
-            where: {
-                sid: authentication,
-            },
-        });
-        if (session && !session.expired) {
-            await method(request, response);
-        } else {
-            response.status(401).json({ message: "No valid authentication provided" });
+export async function getRequestUser(request: NextApiRequest) {
+    const authentication = String(request.headers.authorization);
+    const session = await database.session.findFirst({
+        where: {
+            sid: authentication
         }
-    };
-    return handler;
+    });
+
+    if(!session || session.expired) return null;
+
+    const user = await database.user.findFirst({
+        where: {
+            id: session.userId
+        }
+    });
+    return user;
 }

@@ -6,3 +6,7 @@ export type UserData = {
     manageUsers: boolean;
     protected: boolean;
 }
+
+export type Method = "OPTIONS" | "GET" | "HEAD" | "PUT" | "POST" | "DELETE" | "PATCH";
+
+
