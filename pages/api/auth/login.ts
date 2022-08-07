@@ -1,26 +1,30 @@
+import { Session } from "@prisma/client";
 import { database, toUserData } from "lib/api/database";
-import { apiHandler } from "lib/api/handler";
+import { apiHandler, respondError } from "lib/api/handler";
 import { hashPassword } from "lib/api/security";
+import config from "lib/config";
 
 export default apiHandler({
     GET: async (request, response) => {
         const sid = String(request.headers.authorization);
-        const session = await database.session.findFirst({ where: { sid } });
+        const session: Session | null = await database.session.findFirst({ where: { sid } });
 
-        if (!session || session.expired) {
-            response.status(401).json({ message: "Authorization key not valid" });
-            return;
+        if (!session || (session.expires && session.expires?.getTime() < new Date().getTime())) {
+            return respondError(response, 401, "Authorization key not valid");
         }
 
-        const user = await database.user.findFirst({ where: { id: session.userId } });
+        const user = await database.user.findFirst({
+            where: {
+                id: session.userId,
+            },
+        });
 
         if (!user) {
-            response.status(500).json({ message: `User ID ${session.userId} not found` });
-            return;
+            return respondError(response, 500, `User ID ${session.userId} not found`);
         }
 
         response.status(200).json({
-            user: toUserData(user)
+            user: toUserData(user),
         });
     },
     POST: async (request, response) => {
@@ -35,13 +39,13 @@ export default apiHandler({
         });
 
         if (!user) {
-            response.status(403).json({ message: "Username or Password incorrect" });
-            return;
+            return respondError(response, 403, "Username or Password incorrect");
         }
 
         const session = await database.session.create({
             data: {
                 userId: user.id,
+                expires: new Date(Date.now() + config.session.expireTime),
             },
         });
 
@@ -57,7 +61,7 @@ export default apiHandler({
                     sid: request.headers.authorization,
                 },
                 data: {
-                    expired: true,
+                    expires: new Date(),
                 },
             })
             .then((session) => {
