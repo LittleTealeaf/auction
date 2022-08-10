@@ -52,7 +52,6 @@ export default authApiHandler({
                 },
                 data: {
                     expires: new Date(),
-
                 },
             });
         }

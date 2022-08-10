@@ -41,7 +41,7 @@ export default authApiHandler({
                 data: {
                     username,
                     password: hashPassword(password),
-                    manageUsers: manageUsers || false
+                    manageUsers: manageUsers || false,
                 },
             })
             .then(toUserData)

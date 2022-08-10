@@ -25,6 +25,8 @@ const Navigation: FC<Props> = ({ user, children }) => {
 
     const condenseScreen = width && width <= 800;
 
+    const visibleDrawerWidth = condenseScreen ? 0 : drawerWidth;
+
     return (
         <>
             <AppBar
@@ -61,7 +63,8 @@ const Navigation: FC<Props> = ({ user, children }) => {
             <div
                 className={css.page}
                 style={{
-                    marginLeft: condenseScreen ? "0px" : `${drawerWidth}px`,
+                    marginLeft: `${visibleDrawerWidth}px`,
+                    width: `${(width || 0) - visibleDrawerWidth}px`,
                 }}
             >
                 {children}
@@ -142,7 +145,7 @@ const DrawerContents: FC<{ user: UserData; onAction: () => void }> = ({ user, on
     <>
         <Divider />
         <List>
-            {buildNavItem(onAction,{
+            {buildNavItem(onAction, {
                 icon: <HomeIcon />,
                 primary: "Home",
                 href: "/",
@@ -151,7 +154,7 @@ const DrawerContents: FC<{ user: UserData; onAction: () => void }> = ({ user, on
         <Divider />
         <List>
             {user.manageUsers &&
-                buildNavItem(onAction,{
+                buildNavItem(onAction, {
                     icon: <ManageAccountsIcon />,
                     primary: "Manage Users",
                     href: "/test",

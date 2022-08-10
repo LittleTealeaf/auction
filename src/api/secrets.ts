@@ -31,6 +31,6 @@ const secrets = {
     passwordHash: ensureKey(existed?.passwordHash),
 };
 
-writeFileSync(fn,JSON.stringify(secrets));
+writeFileSync(fn, JSON.stringify(secrets));
 
 export const { passwordHash } = secrets;

@@ -4,15 +4,13 @@ import { UserData } from "types/api";
 console.log("Creating new database connection");
 export const database = new PrismaClient();
 
-
 export function toUserData(user: User): UserData {
-    const {password, ...userData} = user;
+    const { password, ...userData } = user;
     return userData;
 }
 
-
 export function asUserData(user: User | null | undefined): UserData | null {
-    if(!user) return null;
+    if (!user) return null;
 
     return toUserData(user);
 }

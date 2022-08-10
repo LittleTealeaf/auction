@@ -1,7 +1,7 @@
 const config = {
     session: {
-        expireTime: 3600000
-    }
-}
+        expireTime: 3600000,
+    },
+};
 
 export default config;

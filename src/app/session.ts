@@ -3,9 +3,9 @@ export function getSessionId() {
 }
 
 export function setSessionId(sid: string) {
-    sessionStorage.setItem('sid',sid);
+    sessionStorage.setItem("sid", sid);
 }
 
 export function clearSessionId() {
-    sessionStorage.removeItem('sid');
+    sessionStorage.removeItem("sid");
 }
