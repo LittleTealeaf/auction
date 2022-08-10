@@ -6,24 +6,27 @@ import "@fontsource/roboto/700.css";
 import { AppProps } from "next/app";
 import { UserData } from "types/api";
 import { lazy, SetStateAction, Suspense, useEffect, useState } from "react";
-import { fetchApi, jsonResponse, requireStatus } from "src/app/api";
+import { fetchApi, jsonResponse, onCatch, requireStatus } from "src/app/api";
 import LoadingPage from "components/pages/loading";
 import { setSessionId } from "src/app/session";
+import Navigation from "components/Navigation";
+import useSWR from "swr";
 
 export default function App({ Component, pageProps }: AppProps) {
-    const [user, setUser] = useState<UserData | null | undefined>(undefined);
-
-    useEffect(() => {
-        fetchApi("/api/auth/login", "GET")
-            .then(requireStatus(200))
-            .then(jsonResponse)
-            .then((json) => {
-                setUser(json.user);
-            })
-            .catch((reason) => {
-                setUser(null);
-            });
-    }, []);
+    const { data: user, mutate } = useSWR<UserData | null>(
+        {},
+        () =>
+            fetchApi("/api/auth/login", "GET")
+                .then(requireStatus(200))
+                .then(jsonResponse)
+                .then((json) => json.user || null)
+                .catch(onCatch(null)),
+        {
+            revalidateOnFocus: true,
+            refreshInterval: 1000 * 60,
+            revalidateOnReconnect: true,
+        }
+    );
 
     if (user === undefined) {
         return <LoadingPage />;
@@ -37,14 +40,21 @@ export default function App({ Component, pageProps }: AppProps) {
                 <LoginPage
                     callback={(sid: string, user: SetStateAction<UserData | null | undefined>) => {
                         setSessionId(sid);
-                        setUser(user);
+                        // setUser(user);
+                        mutate(user);
                     }}
                 />
             </Suspense>
         );
     }
 
-    return <Component {...pageProps} user={user} />;
+    return (
+        <>
+            <Navigation user={user}>
+                <Component {...pageProps} user={user} />
+            </Navigation>
+        </>
+    );
 }
 
 /*

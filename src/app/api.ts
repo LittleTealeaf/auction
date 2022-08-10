@@ -32,3 +32,7 @@ export function requireStatus(statusCode: number) {
 export async function jsonResponse(response: Response) {
     return response.json();
 }
+
+export function onCatch<T = any>(result: T) {
+    return async (error: any) => result;
+}
