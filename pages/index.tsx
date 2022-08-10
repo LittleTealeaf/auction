@@ -1,14 +1,13 @@
+import { NextPage } from "next";
+import Link from "next/link";
 import { AppPage } from "types/app";
-import Head from "next/head";
 
-const Home: AppPage = ({ user }) => {
+const Page: AppPage = ({ user }) => {
     return (
         <>
-            <Head>
-                <title>Auction Home</title>
-            </Head>
+            <Link href="test">testing</Link>
         </>
     );
 };
 
-export default Home;
+export default Page;

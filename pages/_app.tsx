@@ -1,68 +1,68 @@
-import "../styles/globals.css";
+import "styles/globals.scss";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
-import type { AppProps } from "next/app";
-import { useEffect, useState } from "react";
+import { AppProps } from "next/app";
 import { UserData } from "types/api";
-import LoadingPage from "components/screen/loading";
-import LoginPage from "components/screen/login";
-import { fetchAPI } from "lib/app/fetch";
-import Navigation, { drawerWidth } from "components/navigation";
-import { Box } from "@mui/system";
-import { getSessionUser, setSessionAuth, setSessionUser } from "lib/app/session";
+import { lazy, SetStateAction, Suspense, useEffect, useState } from "react";
+import { fetchApi, jsonResponse, onCatch, requireStatus } from "src/app/api";
+import LoadingPage from "components/pages/loading";
+import { setSessionId } from "src/app/session";
+import Navigation from "components/Navigation";
+import useSWR from "swr";
 
-function AppRoot({ Component, pageProps }: AppProps) {
-
-    const [user, setUser] = useState<UserData | null | undefined>(undefined);
-
-    useEffect(() => {
-        const userCache = getSessionUser();
-        if(userCache != null) {
-            setUser(userCache);
+export default function App({ Component, pageProps }: AppProps) {
+    const { data: user, mutate } = useSWR<UserData | null>(
+        {},
+        () =>
+            fetchApi("/api/auth/login", "GET")
+                .then(requireStatus(200))
+                .then(jsonResponse)
+                .then((json) => json.user || null)
+                .catch(onCatch(null)),
+        {
+            revalidateOnFocus: true,
+            refreshInterval: 1000 * 60,
+            revalidateOnReconnect: true,
         }
-
-        fetchAPI("GET", "api/auth/login")
-            .then((response) => response.json())
-            .then((data) => data.user as UserData || null)
-            .then((user) => {
-                setUser(user);
-                setSessionUser(user);
-            });
-    }, []);
-
-
+    );
 
     if (user === undefined) {
-        return <>
-        <LoadingPage />
-        </>;
+        return <LoadingPage />;
     }
 
-    if (user == null) {
+    if (!user) {
+        const LoginPage = lazy(() => import("components/pages/login"));
+
         return (
-            <LoginPage
-                onLogin={({ sid, user }) => {
-                    setSessionAuth(sid);
-                    setUser(user);
-                }}
-            />
+            <Suspense fallback={<LoadingPage />}>
+                <LoginPage
+                    callback={(sid: string, user: SetStateAction<UserData | null | undefined>) => {
+                        setSessionId(sid);
+                        // setUser(user);
+                        mutate(user);
+                    }}
+                />
+            </Suspense>
         );
     }
 
     return (
         <>
-            <Navigation user={user} />
-            <Box sx={{
-                ml: { md: `${drawerWidth}px` },
-                width: {md: `calc(100% - ${drawerWidth}px)`}
-            }}>
+            <Navigation user={user}>
                 <Component {...pageProps} user={user} />
-            </Box>
+            </Navigation>
         </>
     );
 }
 
-
-export default AppRoot;
+/*
+<Button // MUI Button
+  href="/employees"
+  component="a"
+  LinkComponent={Link} // NextJS Link
+>
+  Manage Employees
+</Button>
+*/

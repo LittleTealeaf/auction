@@ -1,65 +1,79 @@
-import apiHandler from "lib/api/handler";
-import { createSession, prisma, getUser, toUserData } from "lib/api/database";
+import { Session } from "@prisma/client";
+import { database, toUserData } from "src/api/database";
+import { apiHandler, respondError } from "src/api/handler";
+import { hashPassword } from "src/api/security";
+import config from "src/config";
 
 export default apiHandler({
-    GET: async (request, response) =>
-        getUser(request).then((user) => {
-            if (user) {
-                const { id, password, ...userData } = user;
-                response.status(200).json({ user: userData });
-            } else {
-                response.status(200).json({ message: "Invalid or expired session" });
-            }
-        }),
-    POST: async (request, response) => {
-        const { username, password } = request.query;
+    GET: async (request, response) => {
+        const sid = String(request.headers.authorization);
+        const session: Session | null = await database.session.findFirst({ where: { sid } });
 
-        const user = await prisma.user.findFirst({
-            where: {
-                username: String(username),
-            },
-        });
-
-        if (user == null) return response.status(200).json({ message: "User not found" });
-
-        if (user.password == null) {
-            user.password = await prisma.user
-                .update({
-                    where: { id: user.id },
-                    data: { password: String(password) },
-                })
-                .then((user) => user.password);
-        } else {
-            if (user.password != password) return response.status(200).json({ message: "Password does not match" });
+        if (!session || (session.expires && session.expires?.getTime() < new Date().getTime())) {
+            return respondError(response, 401, "Authorization key not valid");
         }
 
-        //Create a session key
-
-        const session = await createSession(user);
-
-        response.status(200).json({
-            result: {
-                sid: session.sid,
-                user: toUserData(user),
+        const user = await database.user.findFirst({
+            where: {
+                id: session.userId,
             },
         });
+
+        if (!user) {
+            return respondError(response, 500, `User ID ${session.userId} not found`);
+        }
+
+        response.status(200).json({
+            user: toUserData(user),
+        });
     },
-    DELETE: async (request, response) =>
-        prisma.session
+    POST: async (request, response) => {
+        const { username, password } = request.query as { username?: string; password?: string };
+        const hashed = hashPassword(password || "");
+
+        const user = await database.user.findFirst({
+            where: {
+                username,
+                password: hashed,
+            },
+        });
+
+        if (!user) {
+            return respondError(response, 403, "Username or Password incorrect");
+        }
+
+        const session = await database.session.create({
+            data: {
+                userId: user.id,
+                expires: new Date(Date.now() + config.session.expireTime),
+            },
+        });
+
+        response.status(200).json({
+            sid: session.sid,
+            user: toUserData(user),
+        });
+    },
+    DELETE: async (request, response) => {
+        await database.session
             .update({
                 where: {
                     sid: request.headers.authorization,
                 },
                 data: {
-                    expired: true,
+                    expires: new Date(),
                 },
             })
             .then((session) => {
                 response.status(202).json({
-                    oldSid: session.sid,
+                    terminatedSid: session.sid,
                 });
             })
             .catch((error) => {
-                response.status(500).json({ message: "Internal Database Error", error });
-            }),
+                response.status(500).json({
+                    message: "Interal Server Error",
+                    error,
+                });
+            });
+    },
 });

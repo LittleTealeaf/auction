@@ -56,11 +56,12 @@ model User {
   username    String  @unique
   password    String?
   manageUsers Boolean @default(false)
-  protected Boolean @default(false)
+  protected   Boolean @default(false)
 }
 
 model Session {
-  sid     String  @id @unique @default(cuid())
+  sid     String    @id @unique @default(cuid())
   userId  Int
-  expired Boolean @default(false)
+  expires DateTime?
+  created DateTime  @default(now())
 }
