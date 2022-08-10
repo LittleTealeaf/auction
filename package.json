@@ -13,8 +13,8 @@
         "prisma": "prisma db push && prisma generate",
         "database": "prisma studio",
         "seed": "prisma db seed",
-        "deletedb": "rimraf prisma/database.db",
-        "setupdb": "rimraf prisma/database.db && prisma db push && prisma generate && prisma db seed",
+        "delete": "rimraf prisma/database.db && rimraf .env.json",
+        "initialize": "rimraf prisma/database.db && rimraf .env.json && prisma db push && prisma generate && prisma db seed",
         "production": "next build && next start"
     },
     "dependencies": {
