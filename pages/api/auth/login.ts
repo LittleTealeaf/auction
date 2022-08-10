@@ -1,8 +1,8 @@
 import { Session } from "@prisma/client";
-import { database, toUserData } from "lib/api/database";
-import { apiHandler, respondError } from "lib/api/handler";
-import { hashPassword } from "lib/api/security";
-import config from "lib/config";
+import { database, toUserData } from "src/api/database";
+import { apiHandler, respondError } from "src/api/handler";
+import { hashPassword } from "src/api/security";
+import config from "src/config";
 
 export default apiHandler({
     GET: async (request, response) => {

@@ -2,8 +2,8 @@ import css from "styles/components/pages/login.module.scss";
 import { FC, FormEventHandler, useState } from "react";
 import { UserData } from "types/api";
 import { Button, FormHelperText, Paper, TextField, Typography } from "@mui/material";
-import { ElementTypes, getFormElement } from "lib/app/form";
-import { fetchApi, jsonResponse, requireStatus } from "lib/app/api";
+import { ElementTypes, getFormElement } from "src/app/form";
+import { fetchApi, jsonResponse, requireStatus } from "src/app/api";
 import LoadingElement from "components/LoadingElement";
 
 type Parameters = {

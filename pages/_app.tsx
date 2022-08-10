@@ -5,11 +5,10 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { AppProps } from "next/app";
 import { UserData } from "types/api";
-import { useEffect, useState } from "react";
-import { fetchApi, jsonResponse, requireStatus } from "lib/app/api";
+import { lazy, SetStateAction, Suspense, useEffect, useState } from "react";
+import { fetchApi, jsonResponse, requireStatus } from "src/app/api";
 import LoadingPage from "components/pages/loading";
-import LoginPage from "components/pages/login";
-import { setSessionId } from "lib/app/session";
+import { setSessionId } from "src/app/session";
 
 export default function App({ Component, pageProps }: AppProps) {
     const [user, setUser] = useState<UserData | null | undefined>(undefined);
@@ -31,13 +30,17 @@ export default function App({ Component, pageProps }: AppProps) {
     }
 
     if (!user) {
+        const LoginPage = lazy(() => import("components/pages/login"));
+
         return (
-            <LoginPage
-                callback={(sid, user) => {
-                    setSessionId(sid);
-                    setUser(user);
-                }}
-            />
+            <Suspense fallback={<LoadingPage />}>
+                <LoginPage
+                    callback={(sid: string, user: SetStateAction<UserData | null | undefined>) => {
+                        setSessionId(sid);
+                        setUser(user);
+                    }}
+                />
+            </Suspense>
         );
     }
 

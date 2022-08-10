@@ -1,6 +1,6 @@
-import { asUserData, database, toUserData } from "lib/api/database";
-import { authApiHandler, respond, respondError } from "lib/api/handler";
-import { hashPassword } from "lib/api/security";
+import { asUserData, database, toUserData } from "src/api/database";
+import { authApiHandler, respond, respondError } from "src/api/handler";
+import { hashPassword } from "src/api/security";
 
 export default authApiHandler({
     GET: async (request, response, rUser) => {
