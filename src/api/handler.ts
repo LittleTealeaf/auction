@@ -72,3 +72,7 @@ export function respond(response: NextApiResponse<any>, code: number, json: any)
 export function respondError(response: NextApiResponse<any>, code: number, message: string, error?: any) {
     respond(response, code, { message, error });
 }
+
+export function asBoolean(value?: string) {
+    return value ? value == 'true' : undefined;
+}

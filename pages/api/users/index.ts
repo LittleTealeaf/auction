@@ -1,5 +1,5 @@
 import { database, mapToUserData, toUserData } from "src/api/database";
-import { authApiHandler } from "src/api/handler";
+import { asBoolean, authApiHandler } from "src/api/handler";
 import { hashPassword } from "src/api/security";
 
 export default authApiHandler({
@@ -19,16 +19,16 @@ export default authApiHandler({
                 },
             })
             .then(mapToUserData);
-
         response.status(200).json({ users });
     },
     POST: async (request, response, user) => {
         if (!user?.manageUsers) return response.status(403).json({ message: "No suffciient permissions" });
 
-        const { username, password, manageUsers } = request.query as {
+        const { username, password, manageUsers, requirePasswordReset } = request.query as {
             username?: string;
             password?: string;
-            manageUsers?: boolean;
+            manageUsers?: string;
+            requirePasswordReset?: string;
         };
 
         const badRequest = (message: string) => response.status(400).json({ message });
@@ -41,13 +41,11 @@ export default authApiHandler({
                 data: {
                     username,
                     password: hashPassword(password),
-                    manageUsers: manageUsers || false,
+                    manageUsers: asBoolean(manageUsers),
+                    requirePasswordReset: asBoolean(requirePasswordReset)
                 },
             })
-            .then(toUserData)
-            .catch((error) => {
-                response.status(500).json({ error });
-            });
+            .then(toUserData);
 
         if (!created) return;
 

@@ -9,17 +9,17 @@ import { lazy, SetStateAction, Suspense, useEffect, useState } from "react";
 import { fetchApi, jsonResponse, onCatch, requireStatus } from "src/app/api";
 import LoadingPage from "components/pages/loading";
 import { setSessionId } from "src/app/session";
-import Navigation from "components/Navigation";
+import PageWrapper from "components/PageWrapper";
 import useSWR from "swr";
 
 export default function App({ Component, pageProps }: AppProps) {
     const { data: user, mutate } = useSWR<UserData | null>(
-        {},
+        "user",
         () =>
             fetchApi("/api/auth/login", "GET")
                 .then(requireStatus(200))
                 .then(jsonResponse)
-                .then((json) => json.user || null)
+                .then((json) => json.user)
                 .catch(onCatch(null)),
         {
             revalidateOnFocus: true,
@@ -50,9 +50,9 @@ export default function App({ Component, pageProps }: AppProps) {
 
     return (
         <>
-            <Navigation user={user}>
+            <PageWrapper user={user}>
                 <Component {...pageProps} user={user} />
-            </Navigation>
+            </PageWrapper>
         </>
     );
 }

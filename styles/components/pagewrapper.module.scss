@@ -2,10 +2,12 @@
     display: flex;
 }
 
+
 .spacer {
     flex-grow: 1;
 }
 
 .page {
     padding: 10px;
+    max-height: calc(100vh - 48px);
 }

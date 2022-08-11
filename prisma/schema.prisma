@@ -52,11 +52,12 @@ model AuctionItem {
 }
 
 model User {
-  id          Int     @id @unique @default(autoincrement())
-  username    String  @unique
-  password    String?
-  manageUsers Boolean @default(false)
-  protected   Boolean @default(false)
+  id                   Int     @id @unique @default(autoincrement())
+  username             String  @unique
+  password             String?
+  requirePasswordReset Boolean @default(false)
+  manageUsers          Boolean @default(false)
+  protected            Boolean @default(false)
 }
 
 model Session {

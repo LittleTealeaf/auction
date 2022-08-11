@@ -2,7 +2,7 @@ import css from "styles/components/pages/login.module.scss";
 import { FC, FormEventHandler, useState } from "react";
 import { UserData } from "types/api";
 import { Button, FormHelperText, Paper, TextField, Typography } from "@mui/material";
-import { ElementTypes, getFormElement } from "src/app/form";
+import { FormTypes, getFormElement } from "src/app/form";
 import { fetchApi, jsonResponse, requireStatus } from "src/app/api";
 import LoadingElement from "components/LoadingElement";
 
@@ -20,8 +20,8 @@ const LoginPage: FC<Parameters> = ({ callback }) => {
         setError(undefined);
         event.preventDefault();
 
-        const username = getFormElement<ElementTypes["TextField"]>(event, "username").value;
-        const password = getFormElement<ElementTypes["TextField"]>(event, "password").value;
+        const username = getFormElement<FormTypes["TextField"]>(event, "username").value;
+        const password = getFormElement<FormTypes["TextField"]>(event, "password").value;
 
         fetchApi("api/auth/login", "POST", {
             username,
@@ -48,15 +48,11 @@ const LoginPage: FC<Parameters> = ({ callback }) => {
                     <TextField error={error != null} name="username" className={css.input} id="username" label="username" required />
                     <TextField error={error != null} name="password" className={css.input} id="password" label="password" type="password" required />
                     {error && <FormHelperText className={css.error}>{error}</FormHelperText>}
-                    <LoadingElement
-                        className={css.submit}
-                        active={isProcessing}
-                        component={
-                            <Button disabled={isProcessing} type="submit" variant="contained">
-                                Sign In
-                            </Button>
-                        }
-                    />
+                    <LoadingElement className={css.submit} active={isProcessing}>
+                    <Button disabled={isProcessing} type="submit" variant="contained">
+                            Sign In
+                        </Button>
+                    </LoadingElement>
                 </form>
             </Paper>
         </div>

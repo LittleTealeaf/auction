@@ -37,3 +37,37 @@ export async function jsonResponse(response: Response) {
 export function onCatch<T = any>(result: T) {
     return async (error: any) => result;
 }
+
+type Compiled = {
+    status: number;
+    json: any;
+}
+
+export async function compileResponse(response: Response) {
+    return {
+        status: response.status,
+        json: await response.json()
+    }
+}
+
+export function onCompiledStatus(status: number, func: (json: any) => void) {
+    return async (compiledResponse: Compiled | null): Promise<Compiled | null> => {
+        if(compiledResponse && compiledResponse.status == status) {
+            func(compiledResponse.json);
+
+            return null;
+        }
+
+        return compiledResponse;
+    }
+}
+
+export function onCompiledDefault(func: (json: any) => void) {
+    return async (compiledResponse: Compiled | null) => {
+        if(compiledResponse) {
+            func(compiledResponse.json);
+
+        }
+        return null;
+    }
+}

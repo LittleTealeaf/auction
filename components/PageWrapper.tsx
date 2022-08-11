@@ -1,4 +1,4 @@
-import css from "styles/components/navigation.module.scss";
+import css from "styles/components/pagewrapper.module.scss";
 import { AppBar, Button, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, Toolbar } from "@mui/material";
 import { FC, MouseEventHandler, useState } from "react";
 import { UserData } from "types/api";
@@ -16,7 +16,7 @@ type Props = {
     children: JSX.Element;
 };
 
-const Navigation: FC<Props> = ({ user, children }) => {
+const PageWrapper: FC<Props> = ({ user, children }) => {
     const { width } = useWindowSize();
 
     const [showMobileDrawer, setShowMobileDrawer] = useState(false);
@@ -64,7 +64,7 @@ const Navigation: FC<Props> = ({ user, children }) => {
                 className={css.page}
                 style={{
                     marginLeft: `${visibleDrawerWidth}px`,
-                    width: `${(width || 0) - visibleDrawerWidth}px`,
+                    width: `calc(100vw - ${visibleDrawerWidth}px)`,
                 }}
             >
                 {children}
@@ -157,10 +157,10 @@ const DrawerContents: FC<{ user: UserData; onAction: () => void }> = ({ user, on
                 buildNavItem(onAction, {
                     icon: <ManageAccountsIcon />,
                     primary: "Manage Users",
-                    href: "/test",
+                    href: "/users",
                 })}
         </List>
     </>
 );
 
-export default Navigation;
+export default PageWrapper;

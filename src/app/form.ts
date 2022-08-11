@@ -1,9 +1,12 @@
 import { FormEvent } from "react";
 
-export type ElementTypes = {
+export type FormTypes = {
     TextField: {
         value: string;
     };
+    Checkbox: {
+        checked: boolean;
+    }
 };
 
 export function getFormElement<T = {}>(event: FormEvent<HTMLFormElement>, name: string) {

@@ -22,7 +22,13 @@ export default authApiHandler({
         respond(response, 200, { user });
     },
     PUT: async (request, response, rUser) => {
-        const { id, username, password, manageUsers } = request.query as { id: string; username?: string; password?: string; manageUsers?: string };
+        const { id, username, password, manageUsers, requirePasswordReset } = request.query as {
+            id: string;
+            username?: string;
+            password?: string;
+            manageUsers?: string;
+            requirePasswordReset?: string;
+        };
 
         if (!rUser.manageUsers && Number(id) != rUser.id) {
             return respondError(response, 403, "Not Permitted");
@@ -51,10 +57,12 @@ export default authApiHandler({
                     },
                 },
                 data: {
-                    expires: new Date(),
+                    expires: new Date(new Date().getTime() - 1),
                 },
             });
         }
+
+        if (user.protected && user.manageUsers && manageUsers === "false") return respondError(response, 403, "Protected User");
 
         const result = await database.user
             .update({
@@ -65,6 +73,7 @@ export default authApiHandler({
                     username,
                     password: password ? hashPassword(password) : undefined,
                     manageUsers: manageUsers ? manageUsers === "true" : undefined,
+                    requirePasswordReset: requirePasswordReset ? requirePasswordReset == "true" : undefined,
                 },
             })
             .then(toUserData)

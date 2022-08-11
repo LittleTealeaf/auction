@@ -1,0 +1,35 @@
+.fab {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+}
+
+.spacer {
+    flex-grow: 1;
+}
+
+.editor_content {
+    display: flex;
+    flex-direction: column;
+
+    > * {
+
+    }
+}
+
+.editor_permissions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.editor_actions {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin-top: 20px;
+
+    > * {
+        margin-left: 10px;
+    }
+}

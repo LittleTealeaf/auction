@@ -4,15 +4,15 @@ import { CSSProperties, FC } from "react";
 import css from "styles/components/loadingelement.module.scss";
 
 const LoadingElement: FC<{
-    component: JSX.Element;
+    children?: JSX.Element | never[] | never;
     active: boolean;
     size?: number;
     style?: CSSProperties;
     className?: ClassNamesArg;
-}> = ({ component, active: loading, size, style, className }) => {
+}> = ({ children, active: loading, size, style, className }) => {
     return (
         <div className={[css.container, className].join(" ")} style={style}>
-            <div>{component}</div>
+            <div>{children}</div>
             {loading && (
                 <CircularProgress
                     size={size || 24}
