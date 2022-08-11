@@ -42,10 +42,11 @@ export default authApiHandler({
                     username,
                     password: hashPassword(password),
                     manageUsers: asBoolean(manageUsers),
-                    requirePasswordReset: asBoolean(requirePasswordReset)
+                    requirePasswordReset: asBoolean(requirePasswordReset),
                 },
             })
-            .then(toUserData);
+            .then(toUserData)
+            .catch((error) => response.status(500).json({ message: "Internal Server Error", error }));
 
         if (!created) return;
 
