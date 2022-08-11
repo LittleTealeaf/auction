@@ -18,3 +18,13 @@ export function asUserData(user: User | null | undefined): UserData | null {
 export function mapToUserData(user: User[]) {
     return user.map(toUserData);
 }
+
+export async function logEvent(userId: number, action: string, description?: string) {
+    await database.log.create({
+        data: {
+            userId,
+            action,
+            description,
+        },
+    });
+}
