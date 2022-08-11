@@ -105,6 +105,15 @@ export default authApiHandler({
             },
         });
 
+        await database.session.updateMany({
+            where: {
+                userId: Number(id),
+            },
+            data: {
+                expires: new Date(new Date().getTime() - 1),
+            },
+        });
+
         respond(response, 200, { user: toUserData(user) });
     },
 });

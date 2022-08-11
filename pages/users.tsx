@@ -1,17 +1,14 @@
 import css from "styles/pages/users.module.scss";
-import { Add as AddIcon, Edit as EditIcon, ExpandMore, Refresh as RefreshIcon, Save as SaveIcon } from "@mui/icons-material";
+import { Add as AddIcon, Delete as DeleteIcon, Edit as EditIcon, Refresh as RefreshIcon, Save as SaveIcon } from "@mui/icons-material";
 import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
     Alert,
     AlertTitle,
-    Box,
     Button,
     Checkbox,
     Dialog,
     DialogActions,
     DialogContent,
+    DialogContentText,
     DialogTitle,
     Divider,
     Fab,
@@ -124,6 +121,7 @@ const EditUser: FC<{ open: boolean; user: UserData | null; onClose: () => void }
     const { width } = useWindowSize();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
 
     const onSubmit: FormEventHandler<HTMLFormElement> = (event) => {
         event.preventDefault();
@@ -158,16 +156,32 @@ const EditUser: FC<{ open: boolean; user: UserData | null; onClose: () => void }
             });
     };
 
+    const handleDelete = () => {
+        fetchApi(`api/users/${user && user.id}`, "DELETE")
+            .then(compileResponse)
+            .then(onCompiledStatus(200, (_) => onClose()))
+            .then(onCompiledDefault((json) => setError(json.message)))
+            .finally(() => setIsConfirmingDelete(false));
+    };
+
     if (!open && isSubmitting) {
         setIsSubmitting(false);
     }
 
-    if(!open && error) {
+    if (!open && error) {
         setError(null);
     }
 
     return (
-        <Dialog open={open} onClose={onClose} fullScreen={(width && width <= 600) || false}>
+        <Dialog
+            open={open}
+            onClose={onClose}
+            fullScreen={(width && width <= 600) || false}
+            scroll="paper"
+            sx={{
+                minWidth: "400px",
+            }}
+        >
             <form onSubmit={onSubmit}>
                 <DialogTitle>{(user && `Editing ${user.username}`) || "Create User"}</DialogTitle>
                 <DialogContent>
@@ -197,6 +211,11 @@ const EditUser: FC<{ open: boolean; user: UserData | null; onClose: () => void }
                     </DialogContent>
                 )}
                 <DialogActions className={css.editor_actions}>
+                    {user && (
+                        <IconButton color="error" onClick={() => setIsConfirmingDelete(true)}>
+                            <DeleteIcon />
+                        </IconButton>
+                    )}
                     <div className={css.spacer} />
                     <Button disabled={isSubmitting} onClick={onClose}>
                         Cancel
@@ -208,6 +227,18 @@ const EditUser: FC<{ open: boolean; user: UserData | null; onClose: () => void }
                     </LoadingElement>
                 </DialogActions>
             </form>
+            <Dialog open={isConfirmingDelete} onClose={() => setIsConfirmingDelete(false)}>
+                <DialogTitle>{"Delete User"}</DialogTitle>
+                <DialogContentText style={{ padding: "10px" }}>{`Are you sure you want to delete ${(user && user.username) || ""}`}</DialogContentText>
+                <DialogActions>
+                    <Button variant="contained" onClick={() => setIsConfirmingDelete(false)}>
+                        Cancel
+                    </Button>
+                    <Button variant="contained" onClick={handleDelete} startIcon={<DeleteIcon />} color="error">
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Dialog>
     );
 };

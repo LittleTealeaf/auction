@@ -1,3 +1,4 @@
+import css from 'styles/components/restrictedpage.module.scss'
 import { FC } from "react";
 import { UserData } from "types/api";
 import { AppPage } from "types/app";
@@ -8,9 +9,12 @@ export default function RestrictedPage<T = {}>(permission: (user: UserData) => b
             return <Content {...props} />;
         }
         return (
-            <>
-                <div>Invalid Permissions</div>
-            </>
+            <div className={css.root}>
+                <div>
+                    <h3>Forbidden Access</h3>
+                    <p>You do not have permissions to view this page</p>
+                </div>
+            </div>
         );
     };
     return Page;
