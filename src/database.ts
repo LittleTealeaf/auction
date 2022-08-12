@@ -1,8 +1,12 @@
 import { PrismaClient, User } from "@prisma/client";
 import { UserData } from "types/api";
 
-console.log("Creating new database connection");
-export const database = new PrismaClient();
+declare global {
+    var database: PrismaClient;
+}
+
+export const database = global.database || new PrismaClient();
+if (process.env.NODE_ENV !== "production") global.database = database;
 
 export function toUserData(user: User): UserData {
     const { password, ...userData } = user;
@@ -17,14 +21,4 @@ export function asUserData(user: User | null | undefined): UserData | null {
 
 export function mapToUserData(user: User[]) {
     return user.map(toUserData);
-}
-
-export async function logEvent(userId: number, action: string, description?: string) {
-    await database.log.create({
-        data: {
-            userId,
-            action,
-            description,
-        },
-    });
 }

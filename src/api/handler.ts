@@ -1,7 +1,7 @@
 import { User } from "@prisma/client";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 import { Method } from "types/api";
-import { database } from "./database";
+import { database } from "../database";
 
 export type AuthApiHandler = (request: NextApiRequest, response: NextApiResponse, user: User) => any;
 

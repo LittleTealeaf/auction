@@ -1,5 +1,5 @@
 import { Session } from "@prisma/client";
-import { database, toUserData } from "src/api/database";
+import { database, toUserData } from "src/database";
 import { apiHandler, respondError } from "src/api/handler";
 import { hashPassword } from "src/api/security";
 import config from "src/config";

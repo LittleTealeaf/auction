@@ -15,6 +15,7 @@ import {
     FormControlLabel,
     IconButton,
     Paper,
+    Skeleton,
     Table,
     TableBody,
     TableCell,
@@ -25,17 +26,22 @@ import {
     Typography,
 } from "@mui/material";
 import RestrictedPage from "components/RestrictedPage";
-import { FC, FormEventHandler, lazy, Suspense, useEffect, useState } from "react";
+import { FC, FormEventHandler, useState } from "react";
 import { compileResponse, fetchApi, jsonResponse, onCatch, onCompiledDefault, onCompiledStatus, requireStatus } from "src/app/api";
 import useSWR from "swr";
 import { UserData } from "types/api";
 import useWindowSize from "src/hooks/useWindowSize";
 import LoadingElement from "components/LoadingElement";
 import { FormTypes, getFormElement } from "src/app/form";
+import { GetStaticProps } from "next";
 
-export default RestrictedPage(
+type Props = {
+    userCount: number;
+};
+
+export default RestrictedPage<Props>(
     (user) => user.manageUsers,
-    ({ user }) => {
+    ({ user, userCount }) => {
         const {
             data: users,
             mutate,
@@ -74,13 +80,15 @@ export default RestrictedPage(
                                 <TableCell>Username</TableCell>
                                 <TableCell>Permissions</TableCell>
                                 <TableCell align="right">
-                                    <IconButton onClick={() => isValidating || mutate()}>
+                                    <IconButton onClick={() => isValidating || mutate(undefined)}>
                                         <RefreshIcon />
                                     </IconButton>
                                 </TableCell>
                             </TableRow>
                         </TableHead>
-                        <TableBody>{users && users.map((item, index) => <UserRow index={index} user={item} key={item.id} onEditRequest={editUser} />)}</TableBody>
+                        <TableBody>
+                            {users ? users.map((item, index) => <UserRow index={index} user={item} key={item.id} onEditRequest={editUser} />) : <PlaceHolder userCount={userCount} />}
+                        </TableBody>
                     </Table>
                 </TableContainer>
                 <Fab disabled={!users} className={css.fab} color="primary" aria-label="add" onClick={() => editUser(-1)}>
@@ -98,6 +106,26 @@ export default RestrictedPage(
         );
     }
 );
+
+const PlaceHolder: FC<{ userCount: number }> = ({ userCount }) => {
+    return (
+        <>
+            {Array(userCount).fill(
+                <TableRow>
+                    <TableCell>
+                        <Skeleton variant="text" />
+                    </TableCell>
+                    <TableCell>
+                        <Skeleton variant="text" />
+                    </TableCell>
+                    <TableCell align="right">
+                        <Skeleton variant="text" />
+                    </TableCell>
+                </TableRow>
+            )}
+        </>
+    );
+};
 
 const UserRow: FC<{ user: UserData; index: number; onEditRequest: (index: number) => void }> = ({ user, index, onEditRequest: onClick }) => {
     const permissions: string[] = [];
@@ -224,7 +252,7 @@ const EditUser: FC<{ open: boolean; user: UserData | null; onClose: () => void }
                     </LoadingElement>
                 </DialogActions>
             </form>
-            <Dialog open={isConfirmingDelete} onClose={() => setIsConfirmingDelete(false)}>
+            <Dialog open={open && isConfirmingDelete} onClose={() => setIsConfirmingDelete(false)}>
                 <DialogTitle>{"Delete User"}</DialogTitle>
                 <DialogContentText style={{ padding: "10px" }}>{`Are you sure you want to delete ${(user && user.username) || ""}`}</DialogContentText>
                 <DialogActions>
@@ -238,4 +266,15 @@ const EditUser: FC<{ open: boolean; user: UserData | null; onClose: () => void }
             </Dialog>
         </Dialog>
     );
+};
+
+export const getStaticProps: GetStaticProps = async (context) => {
+    const users = await database.user.findMany();
+
+    return {
+        props: {
+            userCount: users.length,
+        },
+        revalidate: 60 * 5,
+    };
 };

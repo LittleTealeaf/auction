@@ -1,4 +1,4 @@
-import { asUserData, database, toUserData } from "src/api/database";
+import { asUserData, database, toUserData } from "src/database";
 import { authApiHandler, respond, respondError } from "src/api/handler";
 import { hashPassword } from "src/api/security";
 
