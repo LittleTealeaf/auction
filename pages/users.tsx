@@ -127,10 +127,9 @@ const EditUser: FC<{ open: boolean; user: UserData | null; onClose: () => void }
         event.preventDefault();
         setIsSubmitting(true);
 
-        const username = getFormElement<FormTypes["TextField"]>(event, "username").value;
-        const password = getFormElement<FormTypes["TextField"]>(event, "password").value;
-        const manageUsers = getFormElement<FormTypes["Checkbox"]>(event, "manageUsers").checked;
-        const requirePasswordReset = getFormElement<FormTypes["Checkbox"]>(event, "requirePasswordReset").checked;
+        const username = getFormElement<FormTypes["TextField"]>(event, "username")?.value;
+        const password = getFormElement<FormTypes["TextField"]>(event, "password")?.value;
+        const manageUsers = getFormElement<FormTypes["Checkbox"]>(event, "manageUsers")?.checked;
 
         setError(null);
 
@@ -141,7 +140,6 @@ const EditUser: FC<{ open: boolean; user: UserData | null; onClose: () => void }
             username,
             password,
             manageUsers,
-            requirePasswordReset,
         })
             .then(compileResponse)
             .then(onCompiledStatus(200, (_) => onClose()))
@@ -191,7 +189,6 @@ const EditUser: FC<{ open: boolean; user: UserData | null; onClose: () => void }
                     <div className={css.editor_content}>
                         <TextField id="username" variant="standard" label="username" defaultValue={(user && user.username) || ""} required />
                         <TextField id="password" variant="standard" type="password" label="password" />
-                        <FormControlLabel control={<Checkbox id="requirePasswordReset" defaultChecked={(user && user.requirePasswordReset) || false} />} label="Require Password Reset" />
                     </div>
                 </DialogContent>
                 <DialogContent>

@@ -1,4 +1,4 @@
-import { existsSync, readFile, readFileSync, writeFileSync } from "fs";
+import { existsSync, readFileSync, writeFileSync } from "fs";
 
 const fn = "./.env.json";
 

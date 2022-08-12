@@ -3,7 +3,7 @@ import { FC, FormEventHandler, useState } from "react";
 import { UserData } from "types/api";
 import { Button, FormHelperText, Paper, TextField, Typography } from "@mui/material";
 import { FormTypes, getFormElement } from "src/app/form";
-import { fetchApi, jsonResponse, requireStatus } from "src/app/api";
+import { compileResponse, fetchApi, onCompiledDefault, onCompiledStatus } from "src/app/api";
 import LoadingElement from "components/LoadingElement";
 
 type Parameters = {
@@ -12,7 +12,6 @@ type Parameters = {
 
 const LoginPage: FC<Parameters> = ({ callback }) => {
     const [error, setError] = useState<string | undefined>(undefined);
-
     const [isProcessing, setIsProcessing] = useState(false);
 
     const onSubmit: FormEventHandler<HTMLFormElement> = (event) => {
@@ -20,22 +19,26 @@ const LoginPage: FC<Parameters> = ({ callback }) => {
         setError(undefined);
         event.preventDefault();
 
-        const username = getFormElement<FormTypes["TextField"]>(event, "username").value;
-        const password = getFormElement<FormTypes["TextField"]>(event, "password").value;
+        const username = getFormElement<FormTypes["TextField"]>(event, "username")?.value;
+        const password = getFormElement<FormTypes["TextField"]>(event, "password")?.value;
 
         fetchApi("api/auth/login", "POST", {
             username,
             password,
         })
-            .then(requireStatus(200))
-            .then(jsonResponse)
-            .then((json) => {
-                const { sid, user } = json;
-                callback(sid as string, user as UserData);
-                setIsProcessing(false);
-            })
-            .catch((error) => {
-                setError("Invalid Login");
+            .then(compileResponse)
+            .then(
+                onCompiledStatus(200, (json) => {
+                    const { sid, user } = json;
+                    callback(sid as string, user as UserData);
+                })
+            )
+            .then(
+                onCompiledDefault((json) => {
+                    setError(json.message);
+                })
+            )
+            .finally(() => {
                 setIsProcessing(false);
             });
     };
@@ -45,11 +48,11 @@ const LoginPage: FC<Parameters> = ({ callback }) => {
             <Paper className={css.paper} elevation={24}>
                 <Typography variant="h3">Login</Typography>
                 <form onSubmit={onSubmit}>
-                    <TextField error={error != null} name="username" className={css.input} id="username" label="username" required />
-                    <TextField error={error != null} name="password" className={css.input} id="password" label="password" type="password" required />
+                    <TextField name="username" className={css.input} id="username" label="username" required />
+                    <TextField name="password" className={css.input} id="password" label="password" type="password" required />
                     {error && <FormHelperText className={css.error}>{error}</FormHelperText>}
                     <LoadingElement className={css.submit} active={isProcessing}>
-                    <Button disabled={isProcessing} type="submit" variant="contained">
+                        <Button disabled={isProcessing} type="submit" variant="contained">
                             Sign In
                         </Button>
                     </LoadingElement>

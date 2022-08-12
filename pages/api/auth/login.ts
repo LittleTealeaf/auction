@@ -28,7 +28,7 @@ export default apiHandler({
         });
     },
     POST: async (request, response) => {
-        const { username, password } = request.query as { username?: string; password?: string };
+        const { username, password, newPassword } = request.query as { username?: string; password?: string; newPassword?: string };
         const hashed = hashPassword(password || "");
 
         const user = await database.user.findFirst({
@@ -41,7 +41,6 @@ export default apiHandler({
         if (!user) {
             return respondError(response, 403, "Username or Password incorrect");
         }
-
         const session = await database.session.create({
             data: {
                 userId: user.id,

@@ -10,5 +10,7 @@ export type FormTypes = {
 };
 
 export function getFormElement<T = {}>(event: FormEvent<HTMLFormElement>, name: string) {
-    return event.currentTarget.elements.namedItem(name) as Element & T;
+    const element = event.currentTarget.elements.namedItem(name);
+    return !element ? undefined : element as Element & T;
+    // return event.currentTarget.elements.namedItem(name) as Element & T;
 }

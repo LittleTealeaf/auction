@@ -5,12 +5,14 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { AppProps } from "next/app";
 import { UserData } from "types/api";
-import { lazy, SetStateAction, Suspense, useEffect, useState } from "react";
+import { lazy, SetStateAction, Suspense } from "react";
 import { fetchApi, jsonResponse, onCatch, requireStatus } from "src/app/api";
 import LoadingPage from "components/pages/loading";
 import { setSessionId } from "src/app/session";
 import PageWrapper from "components/PageWrapper";
 import useSWR from "swr";
+
+const LoginPage = lazy(() => import("components/pages/login"));
 
 export default function App({ Component, pageProps }: AppProps) {
     const { data: user, mutate } = useSWR<UserData | null>(
@@ -33,8 +35,6 @@ export default function App({ Component, pageProps }: AppProps) {
     }
 
     if (!user) {
-        const LoginPage = lazy(() => import("components/pages/login"));
-
         return (
             <Suspense fallback={<LoadingPage />}>
                 <LoginPage

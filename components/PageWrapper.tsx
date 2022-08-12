@@ -1,5 +1,5 @@
 import css from "styles/components/pagewrapper.module.scss";
-import { AppBar, Button, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, Toolbar } from "@mui/material";
+import { AppBar, Drawer, Button, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, Toolbar } from "@mui/material";
 import { FC, MouseEventHandler, useState } from "react";
 import { UserData } from "types/api";
 import useWindowSize from "src/hooks/useWindowSize";
@@ -89,7 +89,7 @@ export const UserProfile: FC<{ user: UserData }> = ({ user }) => {
         fetchApi("api/auth/login", "DELETE")
             .then(requireStatus(202))
             .then(jsonResponse)
-            .then((data) => {
+            .then((_) => {
                 clearSessionId();
                 location.reload();
             });

@@ -22,12 +22,11 @@ export default authApiHandler({
         respond(response, 200, { user });
     },
     PUT: async (request, response, rUser) => {
-        const { id, username, password, manageUsers, requirePasswordReset } = request.query as {
+        const { id, username, password, manageUsers } = request.query as {
             id: string;
             username?: string;
             password?: string;
             manageUsers?: string;
-            requirePasswordReset?: string;
         };
 
         if (!rUser.manageUsers && Number(id) != rUser.id) {
@@ -73,7 +72,6 @@ export default authApiHandler({
                     username,
                     password: password ? hashPassword(password) : undefined,
                     manageUsers: manageUsers ? manageUsers === "true" : undefined,
-                    requirePasswordReset: requirePasswordReset ? requirePasswordReset == "true" : undefined,
                 },
             })
             .then(toUserData)
