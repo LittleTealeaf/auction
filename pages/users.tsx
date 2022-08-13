@@ -25,7 +25,6 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import RestrictedPage from "components/RestrictedPage";
 import { FC, FormEventHandler, useState } from "react";
 import { compileResponse, fetchApi, jsonResponse, onCatch, onCompiledDefault, onCompiledStatus, requireStatus } from "src/app/api";
 import useSWR from "swr";
@@ -35,12 +34,13 @@ import LoadingElement from "components/LoadingElement";
 import { FormTypes, getFormElement } from "src/app/form";
 import { GetStaticProps } from "next";
 import { database } from "src/database";
+import { MakeRestrictedPage } from "src/react/wrappers";
 
 type Props = {
     userCount: number;
 };
 
-export default RestrictedPage<Props>(
+export default MakeRestrictedPage<Props>(
     (user) => user.manageUsers,
     ({ user, userCount }) => {
         const {
@@ -284,28 +284,6 @@ const DeleteUserDialog: FC<{
             .finally(() => setIsProcessing(false));
     }
 
-    // const handleDelete = () => {
-    //     fetchApi(`api/users/${user && user.id}`, "DELETE")
-    //         .then(compileResponse)
-    //         .then(onCompiledStatus(200, (_) => onClose()))
-    //         .then(onCompiledDefault((json) => setError(json.message)))
-    //         .finally(() => setIsDeleting(false));
-    // };
-    /*
-    <Dialog open={open && isConfirmingDelete} onClose={() => setIsConfirmingDelete(false)}>
-                <DialogTitle>{"Delete User"}</DialogTitle>
-                <DialogContentText style={{ padding: "10px" }}>{`Are you sure you want to delete ${(user && user.username) || ""}`}</DialogContentText>
-                <DialogActions>
-                    <Button variant="contained" onClick={() => setIsConfirmingDelete(false)}>
-                        Cancel
-                    </Button>
-                    <Button variant="contained" onClick={handleDelete} startIcon={<DeleteIcon />} color="error">
-                        Delete
-                    </Button>
-                </DialogActions>
-            </Dialog>
-    */
-
     return (
         <Dialog open={open} onClose={onCancel}>
             <DialogTitle>{"Delete User"}</DialogTitle>
@@ -314,11 +292,17 @@ const DeleteUserDialog: FC<{
                 <Button variant="contained" onClick={onCancel}>
                     Cancel
                 </Button>
-                <LoadingElement active={isProcessing}>
-                <Button variant="contained" onClick={handleDelete} startIcon={<DeleteIcon />} color="error">
-                    Delete
-                </Button>
-                </LoadingElement>
+                <div
+                    style={{
+                        marginLeft: "10px",
+                    }}
+                >
+                    <LoadingElement active={isProcessing}>
+                        <Button disabled={isProcessing} variant="contained" onClick={handleDelete} startIcon={<DeleteIcon />} color="error">
+                            Delete
+                        </Button>
+                    </LoadingElement>
+                </div>
             </DialogActions>
         </Dialog>
     );

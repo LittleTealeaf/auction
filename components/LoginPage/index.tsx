@@ -1,4 +1,4 @@
-import css from "styles/components/pages/login.module.scss";
+import css from "./style.module.scss";
 import { FC, FormEventHandler, useState } from "react";
 import { UserData } from "types/api";
 import { Button, FormHelperText, Paper, TextField, Typography } from "@mui/material";
@@ -6,11 +6,11 @@ import { FormTypes, getFormElement } from "src/app/form";
 import { compileResponse, fetchApi, onCompiledDefault, onCompiledStatus } from "src/app/api";
 import LoadingElement from "components/LoadingElement";
 
-type Parameters = {
+type Props = {
     callback: (sid: string, user: UserData) => void;
 };
 
-const LoginPage: FC<Parameters> = ({ callback }) => {
+const LoginPage: FC<Props> = ({ callback }) => {
     const [error, setError] = useState<string | undefined>(undefined);
     const [isProcessing, setIsProcessing] = useState(false);
 

@@ -1,11 +1,11 @@
-import css from "styles/components/pages/loading.module.scss";
+import css from "./style.module.scss";
 import Head from "next/head";
 import { FC, lazy, Suspense } from "react";
-import { Typography } from "@mui/material";
+
+const CircularProgress = lazy(() => import("@mui/material/CircularProgress"));
+const Typography = lazy(() => import("@mui/material/Typography"));
 
 const LoadingPage: FC = ({}) => {
-    const CircularProgress = lazy(() => import("@mui/material/CircularProgress"));
-
     return (
         <>
             <Head>
@@ -13,8 +13,8 @@ const LoadingPage: FC = ({}) => {
             </Head>
             <div className={css.root}>
                 <div>
-                    <Typography variant="h4">Loading</Typography>
-                    <Suspense fallback={<></>}>
+                    <Suspense fallback={<h4>{"Loading..."}</h4>}>
+                        <Typography variant="h4">Loading</Typography>
                         <CircularProgress size="100px" />
                     </Suspense>
                 </div>

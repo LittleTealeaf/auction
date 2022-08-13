@@ -7,12 +7,12 @@ import { AppProps } from "next/app";
 import { UserData } from "types/api";
 import { lazy, SetStateAction, Suspense } from "react";
 import { fetchApi, jsonResponse, onCatch, requireStatus } from "src/app/api";
-import LoadingPage from "components/pages/loading";
+import LoadingPage from "components/LoadingPage";
 import { setSessionId } from "src/app/session";
 import PageWrapper from "components/Navigation";
 import useSWR from "swr";
 
-const LoginPage = lazy(() => import("components/pages/login"));
+const LoginPage = lazy(() => import("components/LoginPage"));
 
 export default function App({ Component, pageProps }: AppProps) {
     const { data: user, mutate } = useSWR<UserData | null>(

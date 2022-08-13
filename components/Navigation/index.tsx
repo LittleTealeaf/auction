@@ -1,4 +1,4 @@
-import css from "styles/components/pagewrapper.module.scss";
+import css from "./style.module.scss";
 import { AppBar, Drawer, Button, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, Toolbar } from "@mui/material";
 import { FC, MouseEventHandler, useState } from "react";
 import { UserData } from "types/api";
