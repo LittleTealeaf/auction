@@ -9,7 +9,7 @@ import { lazy, SetStateAction, Suspense } from "react";
 import { fetchApi, jsonResponse, onCatch, requireStatus } from "src/app/api";
 import LoadingPage from "components/LoadingPage";
 import { setSessionId } from "src/app/session";
-import PageWrapper from "components/Navigation";
+import Navigation from "components/Navigation";
 import useSWR from "swr";
 
 const LoginPage = lazy(() => import("components/LoginPage"));
@@ -50,9 +50,9 @@ export default function App({ Component, pageProps }: AppProps) {
 
     return (
         <>
-            <PageWrapper user={user}>
+            <Navigation user={user}>
                 <Component {...pageProps} user={user} />
-            </PageWrapper>
+            </Navigation>
         </>
     );
 }

@@ -1,16 +1,19 @@
 import css from "./style.module.scss";
 import { ClassNamesArg } from "@emotion/react";
-import { CSSProperties, FC, lazy, Suspense } from "react";
+import { CSSProperties, lazy, Suspense } from "react";
+import { MakeFC } from "src/react/wrappers";
 
 const CircularProgress = lazy(() => import("@mui/material/CircularProgress"));
 
-const LoadingElement: FC<{
+type Props = {
     children?: JSX.Element | never[] | never;
     active: boolean;
     size?: number;
     style?: CSSProperties;
     className?: ClassNamesArg;
-}> = ({ children, active: loading, size, style, className }) => {
+};
+
+export default MakeFC<Props>(({ children, active: loading, size, style, className }) => {
     return (
         <div className={[css.container, className].join(" ")} style={style}>
             <div>{children}</div>
@@ -28,6 +31,4 @@ const LoadingElement: FC<{
             )}
         </div>
     );
-};
-
-export default LoadingElement;
+});

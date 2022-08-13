@@ -8,6 +8,7 @@ import { fetchApi, jsonResponse, requireStatus } from "src/app/api";
 import { clearSessionId } from "src/app/session";
 import { MuiIcon } from "types/app";
 import Link from "next/link";
+import { MakeFC } from "src/react/wrappers";
 
 const drawerWidth = 240;
 
@@ -16,7 +17,7 @@ type Props = {
     children: JSX.Element;
 };
 
-const PageWrapper: FC<Props> = ({ user, children }) => {
+export default MakeFC<Props>(({ user, children }) => {
     const { width } = useWindowSize();
 
     const [showMobileDrawer, setShowMobileDrawer] = useState(false);
@@ -71,9 +72,9 @@ const PageWrapper: FC<Props> = ({ user, children }) => {
             </div>
         </>
     );
-};
+});
 
-export const UserProfile: FC<{ user: UserData }> = ({ user }) => {
+const UserProfile: FC<{ user: UserData }> = ({ user }) => {
     const [anchorEl, setAnchorElement] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
@@ -162,5 +163,3 @@ const DrawerContents: FC<{ user: UserData; onAction: () => void }> = ({ user, on
         </List>
     </>
 );
-
-export default PageWrapper;

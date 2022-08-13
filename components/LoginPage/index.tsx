@@ -5,12 +5,13 @@ import { Button, FormHelperText, Paper, TextField, Typography } from "@mui/mater
 import { FormTypes, getFormElement } from "src/app/form";
 import { compileResponse, fetchApi, onCompiledDefault, onCompiledStatus } from "src/app/api";
 import LoadingElement from "components/LoadingElement";
+import { MakeFC } from "src/react/wrappers";
 
 type Props = {
     callback: (sid: string, user: UserData) => void;
 };
 
-const LoginPage: FC<Props> = ({ callback }) => {
+export default MakeFC<Props>(({ callback }) => {
     const [error, setError] = useState<string | undefined>(undefined);
     const [isProcessing, setIsProcessing] = useState(false);
 
@@ -60,6 +61,4 @@ const LoginPage: FC<Props> = ({ callback }) => {
             </Paper>
         </div>
     );
-};
-
-export default LoginPage;
+});
