@@ -9,7 +9,7 @@ import { lazy, SetStateAction, Suspense } from "react";
 import { fetchApi, jsonResponse, onCatch, requireStatus } from "src/app/api";
 import LoadingPage from "components/pages/loading";
 import { setSessionId } from "src/app/session";
-import PageWrapper from "components/PageWrapper";
+import PageWrapper from "components/Navigation";
 import useSWR from "swr";
 
 const LoginPage = lazy(() => import("components/pages/login"));

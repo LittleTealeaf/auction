@@ -24,11 +24,10 @@ export default authApiHandler({
     POST: async (request, response, user) => {
         if (!user?.manageUsers) return response.status(403).json({ message: "No suffciient permissions" });
 
-        const { username, password, manageUsers, requirePasswordReset } = request.query as {
+        const { username, password, manageUsers } = request.query as {
             username?: string;
             password?: string;
             manageUsers?: string;
-            requirePasswordReset?: string;
         };
 
         const badRequest = (message: string) => response.status(400).json({ message });
@@ -42,7 +41,6 @@ export default authApiHandler({
                     username,
                     password: hashPassword(password),
                     manageUsers: asBoolean(manageUsers),
-                    requirePasswordReset: asBoolean(requirePasswordReset),
                 },
             })
             .then(toUserData)

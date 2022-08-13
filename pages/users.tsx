@@ -34,6 +34,7 @@ import useWindowSize from "src/hooks/useWindowSize";
 import LoadingElement from "components/LoadingElement";
 import { FormTypes, getFormElement } from "src/app/form";
 import { GetStaticProps } from "next";
+import { database } from "src/database";
 
 type Props = {
     userCount: number;
@@ -149,7 +150,7 @@ const EditUser: FC<{ open: boolean; user: UserData | null; onClose: () => void }
     const { width } = useWindowSize();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const onSubmit: FormEventHandler<HTMLFormElement> = (event) => {
         event.preventDefault();
@@ -180,14 +181,6 @@ const EditUser: FC<{ open: boolean; user: UserData | null; onClose: () => void }
             .finally(() => {
                 setIsSubmitting(false);
             });
-    };
-
-    const handleDelete = () => {
-        fetchApi(`api/users/${user && user.id}`, "DELETE")
-            .then(compileResponse)
-            .then(onCompiledStatus(200, (_) => onClose()))
-            .then(onCompiledDefault((json) => setError(json.message)))
-            .finally(() => setIsConfirmingDelete(false));
     };
 
     if (!open && isSubmitting) {
@@ -237,7 +230,7 @@ const EditUser: FC<{ open: boolean; user: UserData | null; onClose: () => void }
                 )}
                 <DialogActions className={css.editor_actions}>
                     {user && (
-                        <IconButton color="error" onClick={() => setIsConfirmingDelete(true)}>
+                        <IconButton color="error" onClick={() => setIsDeleting(true)}>
                             <DeleteIcon />
                         </IconButton>
                     )}
@@ -252,7 +245,54 @@ const EditUser: FC<{ open: boolean; user: UserData | null; onClose: () => void }
                     </LoadingElement>
                 </DialogActions>
             </form>
-            <Dialog open={open && isConfirmingDelete} onClose={() => setIsConfirmingDelete(false)}>
+            {user && (
+                <DeleteUserDialog
+                    user={user}
+                    open={isDeleting}
+                    onDeleteUser={() => {
+                        setIsDeleting(false);
+                        onClose();
+                    }}
+                    onCancel={() => setIsDeleting(false)}
+                    onError={setError}
+                />
+            )}
+        </Dialog>
+    );
+};
+
+const DeleteUserDialog: FC<{
+    user: UserData;
+    open: boolean;
+    onDeleteUser: () => void;
+    onCancel: () => void;
+    onError: (error: string) => void;
+}> = ({ user, open, onDeleteUser, onCancel, onError }) => {
+    const [isProcessing, setIsProcessing] = useState(false);
+
+    function handleDelete() {
+        setIsProcessing(true);
+        fetchApi(`api/users/${user.id}`, "DELETE")
+            .then(compileResponse)
+            .then(onCompiledStatus(200, onDeleteUser))
+            .then(
+                onCompiledDefault((json) => {
+                    onError(json.message);
+                    onCancel();
+                })
+            )
+            .finally(() => setIsProcessing(false));
+    }
+
+    // const handleDelete = () => {
+    //     fetchApi(`api/users/${user && user.id}`, "DELETE")
+    //         .then(compileResponse)
+    //         .then(onCompiledStatus(200, (_) => onClose()))
+    //         .then(onCompiledDefault((json) => setError(json.message)))
+    //         .finally(() => setIsDeleting(false));
+    // };
+    /*
+    <Dialog open={open && isConfirmingDelete} onClose={() => setIsConfirmingDelete(false)}>
                 <DialogTitle>{"Delete User"}</DialogTitle>
                 <DialogContentText style={{ padding: "10px" }}>{`Are you sure you want to delete ${(user && user.username) || ""}`}</DialogContentText>
                 <DialogActions>
@@ -264,6 +304,22 @@ const EditUser: FC<{ open: boolean; user: UserData | null; onClose: () => void }
                     </Button>
                 </DialogActions>
             </Dialog>
+    */
+
+    return (
+        <Dialog open={open} onClose={onCancel}>
+            <DialogTitle>{"Delete User"}</DialogTitle>
+            <DialogContentText style={{ padding: "10px" }}>{`Are you sure you want to delete ${user.username}?`}</DialogContentText>
+            <DialogActions>
+                <Button variant="contained" onClick={onCancel}>
+                    Cancel
+                </Button>
+                <LoadingElement active={isProcessing}>
+                <Button variant="contained" onClick={handleDelete} startIcon={<DeleteIcon />} color="error">
+                    Delete
+                </Button>
+                </LoadingElement>
+            </DialogActions>
         </Dialog>
     );
 };
