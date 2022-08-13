@@ -42,7 +42,7 @@ type Props = {
 
 export default MakeRestrictedPage<Props>(
     (user) => user.manageUsers,
-    ({ user, userCount }) => {
+    ({ userCount }) => {
         const {
             data: users,
             mutate,

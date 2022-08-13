@@ -49,11 +49,9 @@ export default function App({ Component, pageProps }: AppProps) {
     }
 
     return (
-        <>
-            <Navigation user={user}>
-                <Component {...pageProps} user={user} />
-            </Navigation>
-        </>
+        <Navigation user={user}>
+            <Component {...pageProps} user={user} />
+        </Navigation>
     );
 }
 
