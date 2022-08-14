@@ -18,4 +18,5 @@ export function MakeRestrictedPage<T = {}>(check: (user: UserData) => boolean, C
         }
         return <RestrictedPage />
     }
+    return Page;
 }
