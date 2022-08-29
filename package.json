@@ -20,15 +20,15 @@
     "dependencies": {
         "@emotion/react": "^11.10.0",
         "@emotion/styled": "^11.10.0",
-        "@fontsource/roboto": "^4.5.7",
+        "@fontsource/roboto": "^4.5.8",
         "@mui/icons-material": "^5.8.4",
-        "@mui/material": "^5.10.0",
+        "@mui/material": "^5.10.3",
         "@next/bundle-analyzer": "^12.2.3",
         "@prisma/client": "^4.2.1",
         "argon2": "^0.28.7",
         "dotenv": "^16.0.1",
         "fs": "^0.0.1-security",
-        "next": "12.2.4",
+        "next": "12.2.5",
         "next-session": "^4.0.5",
         "node": "^18.7.0",
         "prisma": "^4.1.1",
@@ -42,7 +42,7 @@
         "ts-node": "^10.9.1"
     },
     "devDependencies": {
-        "@types/node": "^18.7.5",
+        "@types/node": "^18.7.13",
         "@types/react": "18.0.17",
         "@types/react-dom": "18.0.6",
         "eslint": "8.22.0",
