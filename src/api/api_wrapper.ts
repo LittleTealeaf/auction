@@ -26,3 +26,8 @@ export function apiHandler(methods: MethodList): NextApiHandler {
     });
   };
 }
+
+
+export function returnResponse(response: NextApiResponse<any>, code: number, data: any) {
+  response.status(code).json(data);
+}
