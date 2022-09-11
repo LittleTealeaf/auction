@@ -1,9 +1,17 @@
 import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
+import { useEffect } from 'react'
+import { getCookie, setCookie } from 'src/pages/cookies'
 import styles from '../styles/Home.module.css'
 
 const Home: NextPage = () => {
+
+  useEffect(() => {
+    setCookie("auth","awioejfawef")
+  })
+
+
   return (
     <div className={styles.container}>
       <Head>
@@ -75,6 +83,10 @@ export default Home
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const cookies = context.req.headers.cookie;
+
+  const auth = getCookie("auth",cookies);
+
+  console.log(auth);
 
   return {
     props: {}

@@ -19,15 +19,11 @@ export default apiHandler({
       },
     });
 
-    if (!user) {
-      return respondError(response, 404, "User not found");
-    }
-
     // Hash password
     const password = raw_password;
 
-    if (user.password !== password) {
-      return respondError(response, 401, "Invalid Password");
+    if (user?.password !== password) {
+      return respondError(response, 400, "Invalid Username or Password");
     }
 
     const session = await database.session.create({
@@ -42,7 +38,7 @@ export default apiHandler({
     const { sid } = request.query as { sid?: string };
 
     if (!sid) {
-      return respondError(response, 401, "Please include a sid");
+      return respondError(response, 400, "Please include a sid");
     }
 
     await database.session.delete({
