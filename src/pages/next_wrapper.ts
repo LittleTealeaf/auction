@@ -7,5 +7,5 @@ export function AuthenticatedPage<T = {}>(page: NextPage<T>): NextPage<T> {
 }
 
 
-// If not authenticated, then redirect to the user board
+// If not authenticated, then redirect to the user login
 // export function AuthenticatedServerSideProps
