@@ -3,7 +3,10 @@ export function setCookie(key: string, value: string, path: string = "/") {
 }
 
 
-export function getCookie(key: string, source = document.cookie) {
+export function getCookie(key: string, source?: string) {
+
+  source = source || document.cookie;
+
   let name = key + "=";
   let decodedCookie = decodeURIComponent(source);
   let ca = decodedCookie.split(';');
