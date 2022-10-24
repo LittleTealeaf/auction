@@ -24,7 +24,7 @@
         "@mui/icons-material": "^5.8.4",
         "@mui/material": "^5.10.3",
         "@next/bundle-analyzer": "^12.2.5",
-        "@prisma/client": "^4.2.1",
+        "@prisma/client": "^4.5.0",
         "argon2": "^0.28.7",
         "dotenv": "^16.0.1",
         "fs": "^0.0.1-security",
